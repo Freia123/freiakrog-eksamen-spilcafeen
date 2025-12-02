@@ -1,5 +1,13 @@
 "use strict"; // Aktiverer strict mode - hjælper med at fange fejl
 
+// DEBUG flag: skift til true for at se console.log under udvikling
+const DEBUG = false;
+// Gem originel console.log og gør den betinget
+const _origConsoleLog = console.log.bind(console);
+console.log = function (...args) {
+  if (DEBUG) _origConsoleLog(...args);
+};
+
 // Starter app når DOM er loaded
 document.addEventListener("DOMContentLoaded", initApp);
 
@@ -805,8 +813,8 @@ function toggleFavorite(event, gameTitle) {
   // Hent eksisterende favoritter fra localStorage
   let favorites = getFavorites();
 
-  // Toggle mellem tomt og fyldt hjerte
-  if (favoriteIcon.src.includes("Favorit tomt ikon.png")) {
+  // Toggle favorit status baseret på billedets filnavn (mere robust med endsWith)
+  if (favoriteIcon.src.endsWith("Favorit%20tomt%20ikon.png") || favoriteIcon.src.endsWith("Favorit tomt ikon.png")) {
     favoriteIcon.src = "Images/Favorit fyldt ikon.png";
     // Tilføj til favoritter
     if (!favorites.includes(gameTitle)) {
@@ -814,7 +822,7 @@ function toggleFavorite(event, gameTitle) {
       saveFavorites(favorites);
     }
     console.log(`❤️ Tilføjet til favoritter: ${gameTitle}`);
-  } else {
+  } else if (favoriteIcon.src.endsWith("Favorit%20fyldt%20ikon.png") || favoriteIcon.src.endsWith("Favorit fyldt ikon.png")) {
     favoriteIcon.src = "Images/Favorit tomt ikon.png";
     // Fjern fra favoritter
     favorites = favorites.filter((title) => title !== gameTitle);

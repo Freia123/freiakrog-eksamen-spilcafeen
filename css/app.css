@@ -922,7 +922,7 @@ p {
 .age-icon, /* Detaljeside alders ikon */
 .difficulty-icon /* Detaljeside sværhedsgrad ikon */
 {
-  width: 25px;
+  width: 30px;
   margin-right: 10px;
 }
 
@@ -967,6 +967,21 @@ p {
 .favorite-icon:active {
   transform: scale(0.95);
   background: rgba(240, 240, 240, 1);
+}
+
+/* FAST STØRRELSE OG STABILITET FOR FAVORIT-IKONER */
+.favorite-icon {
+  width: 32px;             /* fast bredde */
+  height: 32px;            /* fast højde */
+  object-fit: contain;      /* skalerer billedet korrekt uden deformation */
+  cursor: pointer;          /* giver visuelt feedback */
+  transition: none;         /* fjern animation ved klik */
+}
+
+.favorite-icon:active,
+.favorite-icon:focus {
+  transform: none;          /* fjern enhver skalering ved klik/fokus */
+  outline: none;            /* fjern fokus-outline */
 }
 
 /* =====================
