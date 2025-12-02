@@ -248,7 +248,7 @@ p {
 .bottom-nav-label {
   font-size: 0.75rem; /* Tekst under ikon */
   font-weight: 500;
-  transition: var(--transition);
+  transition: var(--transition); 
   text-align: center;
 }
 
@@ -262,7 +262,7 @@ p {
 }
 
 .bottom-nav-active {
-  color: var(--primary) !important;
+  color: var(--primary) !important; /* Rød tekst når aktiv */
   background: rgba(199, 2, 0, 0.15);
 }
 
