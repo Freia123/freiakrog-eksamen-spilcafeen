@@ -27,11 +27,20 @@
       <!-- Header søgefelt og filter -->
       <div class="header-controls">
         <div class="header-search">
-          <input
-            type="text"
-            id="header-search-input"
-            placeholder="Søg spil..."
-          />
+          <!-- Klikbart søge-ikon som viser søgefeltet ved klik -->
+          <button id="search-toggle" class="search-toggle" aria-label="Åbn søgning">
+            <img src="Images/Søge ikon.png" alt="Søg" class="search-icon" />
+          </button>
+
+          <!-- Gemt søgefelt: vises når brugeren klikker på ikonet -->
+          <div id="header-search-wrapper" class="header-search-wrapper" aria-hidden="true">
+            <input
+              type="text"
+              id="header-search-input"
+              placeholder="Søg spil..."
+              aria-label="Søg spil"
+            />
+          </div>
         </div>
 
         <button

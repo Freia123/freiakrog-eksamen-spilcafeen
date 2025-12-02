@@ -8,16 +8,15 @@
   --primary-light: #FAFAFA;
   --secondary-light: #3c4043;
 
-  /* Text - Dark Mode Colors */
+  /* Textfarver */
   --text: #1E1B1B;
   --text-light: #1E1B1B;  /*Bruges ikke*/
 
-  /* Backgrounds - Dark Mode */
+  /* Baggrundsfarver */
   --bg: #FAFAFA;
   --bg-card: #F1F1F1;
 
-  /* Semantic */
-  /* Semantic */
+  /* Semantiske farver */
   --success: #34a853;
   --warning: #fbc02d;
   --error: #ea4335;
@@ -91,7 +90,7 @@ body {
 /* Prevent background scroll when modal is open */
 
 main {
-  max-width: min(1400px, 95vw);
+  max-width: min(1400px, 95vw); /* Maks bredde på indhold */
   margin: 0 auto;
   padding: clamp(5rem, 10vw, 8rem) 1rem 6rem; /* Extra padding bottom for bottom nav */
 }
@@ -145,10 +144,10 @@ p {
   font-size: 0.9rem;
   color: #666;
   font-weight: 500;
-  white-space: nowrap;
+  white-space: nowrap; /* Forhindrer linjeskift */
 }
 
-.active-filters-list {
+.active-filters-list { 
   display: flex;
   gap: 0.5rem;
   flex-wrap: wrap;
@@ -241,25 +240,25 @@ p {
 }
 
 .bottom-nav-icon {
-  font-size: 1.5rem;
+  font-size: 1.5rem; /* Størrelse på ikoner */
   margin-bottom: 0.25rem;
   transition: var(--transition);
 }
 
 .bottom-nav-label {
-  font-size: 0.75rem;
+  font-size: 0.75rem; /* Tekst under ikon */
   font-weight: 500;
   transition: var(--transition);
   text-align: center;
 }
 
 .bottom-nav-item:hover {
-  color: var(--primary);
+  color: var(--primary); /* Rød tekst ved hover */
   background: rgba(199, 2, 0, 0.1);
 }
 
 .bottom-nav-item:hover .bottom-nav-icon {
-  transform: scale(1.1);
+  transform: scale(1.1); /* Forstør ikon ved hover */
 }
 
 .bottom-nav-active {
@@ -268,7 +267,7 @@ p {
 }
 
 .bottom-nav-active .bottom-nav-icon {
-  transform: scale(1.1);
+  transform: scale(1.1); /* Forstør ikon når aktiv */
 }
 
 /* ===========================================
@@ -360,7 +359,7 @@ p {
 #genre-select,
 #sort-select {
   min-width: 160px;
-  cursor: pointer;
+  cursor: pointer; 
 }
 
 /* Playtime filter styling */
@@ -438,7 +437,7 @@ p {
 }
 
 #clear-filters:hover {
-  background: var(--error);
+  background: var(--error); /* Rød baggrund ved hover */
   color: white;
   border-color: var(--error);
   transform: translateY(-2px);
@@ -518,18 +517,18 @@ p {
   transition: var(--transition);
   min-width: 180px;
   background: var(--bg-card);
-  border: 1px solid var(--secondary);
+  border: none; /* Fjernet border */
   border-radius: var(--radius);
   color: var(--text);
 }
 
 .header-location select:hover {
-  border-color: var(--primary);
+  border: none; /* Ingen border ved hover */
 }
 
 .header-location select:focus {
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(199, 2, 0, 0.1);
+  outline: none; /* Fjernet outline ved fokus */
+  box-shadow: none; /* Fjernet box-shadow ved fokus */
 }
 
 /* HEADER CONTROLS (SEARCH + FILTER) */  /* Højre side af header */
@@ -564,8 +563,8 @@ p {
 
 /* Filtrering-ikon styling */
 .filter-icon {
-  width: 24px;
-  height: 24px;
+  width: 36px;
+  height: 36px;
   transition: var(--transition);
 }
 
@@ -573,7 +572,7 @@ p {
 .filter-toggle {
   position: relative;
   background: var(--bg);
-  border: 1px solid var(--secondary);
+  border: none;
   border-radius: var(--radius);
   padding: 0.75rem;
   cursor: pointer;
@@ -593,11 +592,101 @@ p {
 .filter-toggle.active {
   background: var(--primary);
   color: white;
-  border-color: var(--primary);
 }
 
 .filter-toggle:hover .filter-icon {
   filter: brightness(0) invert(1); /* Gør billedet hvidt ved hover */
+}
+
+/* Søge-ikon og skjult søgefelt */
+.search-toggle {
+  background: transparent;
+  border: none;
+  padding: 0.5rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius);
+  background: var(--bg);
+  transition: var(--transition);
+}
+
+.search-toggle:hover {
+  background: var(--primary);
+  border: 1px solid var(--primary);
+}
+
+.search-icon {
+  width: 36px; /* størrelse på ikon */
+  height: 36px;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.search-toggle:hover .search-icon {
+  filter: brightness(0) invert(1); /* Gør billedet hvidt ved hover */
+}
+
+/* Wrapper omkring input - skjult som standard */
+.header-search-wrapper {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 0.5rem);
+  display: flex;
+  align-items: center;
+  background: var(--bg-card);
+  padding: 0.6rem 0.75rem;
+  border-radius: calc(var(--radius) * 0.6);
+  box-shadow: var(--shadow-lg);
+  transform-origin: top right;
+  transform: scale(0.98);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  z-index: 1002;
+  min-width: 420px; /* bredere wrapper på desktop */
+}
+
+.header-search-wrapper.open {
+  transform: scale(1);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.header-search-wrapper input {
+  width: 360px; /* større input bredde */
+  margin: 0;
+  box-shadow: none;
+  padding: 0.9rem 1rem; /* gør input højere */
+  font-size: 1.05rem;
+  border-radius: calc(var(--radius) * 0.5);
+}
+
+
+/* Mobil: gør søgefeltet fuld-bredde og mere synligt */
+@media (max-width: 768px) {
+  .header-search-wrapper {
+    position: fixed;
+    left: 1rem;
+    right: 1rem;
+    top: 4.25rem; /* under header */
+    min-width: unset;
+    width: calc(100% - 2rem);
+    border-radius: 0.6rem;
+    padding: 0.6rem;
+    transform-origin: top center;
+  }
+
+  .header-search-wrapper input {
+    width: 100%;
+    padding: 1rem 1rem;
+    font-size: 1.125rem;
+  }
+
+  .search-icon {
+    width: 34px;
+    height: 34px;
+  }
 }
 
 .filter-toggle.active .filter-icon {

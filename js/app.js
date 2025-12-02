@@ -13,27 +13,39 @@ function initApp() {
 
   // ===== HEADER SØGNING OG FILTRERING =====
   // Søgefelt i header - filtrer på spilnavn når brugeren skriver
-  document.querySelector("#header-search-input").addEventListener("input", filterGames);
+  document
+    .querySelector("#header-search-input")
+    .addEventListener("input", filterGames);
+
+  // Toggle søgefelt via søge-ikon (vis/skjul)
+  initSearchToggle();
 
   // Genre/kategori dropdown i header - filtrer når bruger vælger kategori
-  document.querySelector("#header-genre-select").addEventListener("change", filterGames);
+  document
+    .querySelector("#header-genre-select")
+    .addEventListener("change", filterGames);
 
   // Sort dropdown i header - sortér spil når bruger ændrer sortering
-  document.querySelector("#header-sort-select").addEventListener("change", filterGames);
+  document
+    .querySelector("#header-sort-select")
+    .addEventListener("change", filterGames);
 
   // ===== MAIN SORTERING =====
   // Sort dropdown ved siden af "Alle spil" overskriften - alternativ til header sort
-  document.querySelector("#main-sort-select").addEventListener("change", filterGames);
-    
+  document
+    .querySelector("#main-sort-select")
+    .addEventListener("change", filterGames);
 
   // ===== SPILLETID RANGE FILTRERING =====
   // "Fra" spilletid felt - auto-udfyldning af "til" felt
-  document.querySelector("#header-playtime-from").addEventListener("input", function () {
-    const fromValue = this.value; // Hent den indtastede "fra" værdi
-    const toField = document.querySelector("#header-playtime-to"); // Find "til" feltet
+  document
+    .querySelector("#header-playtime-from")
+    .addEventListener("input", function () {
+      const fromValue = this.value; // Hent den indtastede "fra" værdi
+      const toField = document.querySelector("#header-playtime-to"); // Find "til" feltet
 
-  // AUTOMATISK BEREGNING: Hver gang "Fra" ændres, sæt "Til" til +15 minutter
-  // Eksempel: Fra=30 → Til=45, Fra=60 → Til=75
+      // AUTOMATISK BEREGNING: Hver gang "Fra" ændres, sæt "Til" til +15 minutter
+      // Eksempel: Fra=30 → Til=45, Fra=60 → Til=75
       if (fromValue) {
         toField.value = parseInt(fromValue) + 15; // Konverterer til tal og læg 15 til
       } else {
@@ -45,18 +57,22 @@ function initApp() {
     });
 
   // "Til" spilletid felt - manuel justering af spilletid range
-  document.querySelector("#header-playtime-to").addEventListener("input", filterGames);
+  document
+    .querySelector("#header-playtime-to")
+    .addEventListener("input", filterGames);
 
   // ===== RATING FELTER - AVANCERET SYNKRONISERING =====
   // Rating "Fra" felt - tillader bruger fleksibilitet men sikrer logiske værdier
-  document.querySelector("#header-rating-from").addEventListener("input", function () {
-    const fromValue = parseInt(this.value); // Konverter til tal (NaN(Not a number) hvis tomt)
-    const toField = document.querySelector("#header-rating-to");
-    const toValue = parseInt(toField.value); // Hent nuværende "Til" værdi
+  document
+    .querySelector("#header-rating-from")
+    .addEventListener("input", function () {
+      const fromValue = parseInt(this.value); // Konverter til tal (NaN(Not a number) hvis tomt)
+      const toField = document.querySelector("#header-rating-to");
+      const toValue = parseInt(toField.value); // Hent nuværende "Til" værdi
 
-  // SCENARIE 1: Bruger ændrer "Fra" og "Til" bliver for lav
-  // Eksempel: Fra=2→5, Til=3 → Fra=5, Til=5 (auto-justering)
-    if (fromValue && toValue && toValue < fromValue) {
+      // SCENARIE 1: Bruger ændrer "Fra" og "Til" bliver for lav
+      // Eksempel: Fra=2→5, Til=3 → Fra=5, Til=5 (auto-justering)
+      if (fromValue && toValue && toValue < fromValue) {
         toField.value = fromValue; // Løft "Til" til samme niveau som "Fra"
         console.log(
           `📊 Rating auto-justering: Til løftet fra ${toValue} til ${fromValue}`
@@ -135,6 +151,52 @@ function initApp() {
 
   // Filter panel toggle functionality
   initFilterPanel();
+}
+
+// Init søge-ikon toggle funktionalitet
+function initSearchToggle() {
+  const searchToggle = document.querySelector("#search-toggle");
+  const searchWrapper = document.querySelector("#header-search-wrapper");
+  const searchInput = document.querySelector("#header-search-input");
+
+  if (!searchToggle || !searchWrapper || !searchInput) return;
+
+  // Åbn / luk ved klik
+  searchToggle.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const isOpen = searchWrapper.classList.contains("open");
+    if (isOpen) {
+      closeSearch();
+    } else {
+      openSearch();
+    }
+  });
+
+  // Luk når der klikkes udenfor
+  document.addEventListener("click", (e) => {
+    if (!searchWrapper.contains(e.target) && !searchToggle.contains(e.target)) {
+      closeSearch();
+    }
+  });
+
+  // Luk ved Escape
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      closeSearch();
+    }
+  });
+
+  function openSearch() {
+    searchWrapper.classList.add("open");
+    searchWrapper.setAttribute("aria-hidden", "false");
+    // Fokusér input efter animation frame
+    requestAnimationFrame(() => searchInput.focus());
+  }
+
+  function closeSearch() {
+    searchWrapper.classList.remove("open");
+    searchWrapper.setAttribute("aria-hidden", "true");
+  }
 }
 
 // Filter panel functionality
@@ -860,11 +922,13 @@ let isDragging = false; // Flag der tracker om brugeren trækker i karrussel
 // Denne funktion henter data, opretter karrussel struktur og initialiserer alt
 function populateCarousel() {
   console.log("🎠 Starter karrussel initialisering...");
-  
+
   // ===== HENT OG SORTÉR SPIL DATA =====
   // Sortér alle spil efter rating (højeste først) og tag kun de 10 bedste
   carouselGames = allGames.sort((a, b) => b.rating - a.rating).slice(0, 10);
-  console.log(`📊 Karrussel spil udvalgt: ${carouselGames.length} top-rated games`);
+  console.log(
+    `📊 Karrussel spil udvalgt: ${carouselGames.length} top-rated games`
+  );
 
   // ===== RYD EKSISTERENDE KARRUSSEL INDHOLD =====
   // Sørg for at karrussel er tom før vi tilføjer nyt indhold
@@ -895,7 +959,7 @@ function populateCarousel() {
 // Struktur: [kopi1 (0-9), original (10-19), kopi2 (20-29)] = 30 kort total
 function createInfiniteCarousel() {
   console.log("🔄 Opbygger infinite scroll struktur...");
-  
+
   const carousel = document.querySelector("#game-carousel");
 
   // ===== OPRET EXTENDED ARRAY MED TRIPLE KOPI SYSTEM =====
@@ -906,17 +970,19 @@ function createInfiniteCarousel() {
     ...carouselGames, // ANDEN KOPI (index 20-29)   → bruges til reset når vi når slutningen
   ];
 
-  console.log(`🎮 Array struktur: ${carouselGames.length} originale → ${extendedGames.length} total kort`);
+  console.log(
+    `🎮 Array struktur: ${carouselGames.length} originale → ${extendedGames.length} total kort`
+  );
   console.log("📍 Positioner: Kopi1(0-9) | Original(10-19) | Kopi2(20-29)");
 
   // ===== GENERER HTML FOR ALLE KORT =====
   // Loop gennem alle 30 kort og opret HTML elements
   for (let i = 0; i < extendedGames.length; i++) {
     const game = extendedGames[i];
-    
+
     // ===== CALCULATE METADATA FOR INFINITE TRACKING =====
     const originalIndex = i % carouselGames.length; // Finder hvilket originalt spil dette repræsenterer
-    
+
     // ===== OPRET HTML STRUKTUR FOR ÉT KORT =====
     const gameHTML = `
       <article class="game-card" data-index="${i}" data-original-index="${originalIndex}">
@@ -926,11 +992,11 @@ function createInfiniteCarousel() {
           </div>
       </article>
     `;
-    
+
     // Tilføj HTML til DOM
     carousel.insertAdjacentHTML("beforeend", gameHTML);
   }
-  
+
   console.log("🏗️ HTML struktur oprettet - alle kort tilføjet til DOM");
 }
 
@@ -938,7 +1004,7 @@ function createInfiniteCarousel() {
 // Denne funktion bruges når bruger klikker på et side-kort for at navigere direkte til det
 function goToSlide(index) {
   console.log(`🎯 Navigerer direkte til kort index: ${index}`);
-  
+
   // Opdater global position og beregn ny transformation
   currentCarouselIndex = index;
   updateCarouselPosition();
@@ -952,14 +1018,14 @@ let isNavigating = false; // Låser navigation under animation for at forhindre 
 // Denne funktion håndterer navigation til næste kort og seamless reset
 function nextSlide() {
   console.log("▶️ NextSlide kaldt");
-  
+
   // ===== SPAM-CLICK BESKYTTELSE =====
   // Hvis en animation allerede kører, ignorer nye klik
   if (isNavigating) {
     console.log("⏸️ Navigation blokeret - animation i gang");
     return;
   }
-  
+
   // Lås navigation under denne operation
   isNavigating = true;
 
@@ -970,33 +1036,35 @@ function nextSlide() {
   // ===== INFINITE SCROLL RESET LOGIC =====
   // Tjek om vi har nået grænsen for det andet sæt kort
   const resetThreshold = carouselGames.length * 2; // = 20 (slutningen af andet sæt)
-  
+
   if (currentCarouselIndex >= resetThreshold) {
-    console.log(`🔄 RESET TRIGGER: Index ${currentCarouselIndex} >= ${resetThreshold}`);
-    
+    console.log(
+      `🔄 RESET TRIGGER: Index ${currentCarouselIndex} >= ${resetThreshold}`
+    );
+
     // Vent på at den nuværende animation er færdig
     setTimeout(() => {
       const carousel = document.querySelector("#game-carousel");
-      
+
       // ===== SEAMLESS RESET SEQUENCE =====
       // 1. Fjern CSS transition for øjeblikkelig positionering
       carousel.style.transition = "none";
-      
+
       // 2. Spring tilbage til starten af andet sæt (index 10)
       currentCarouselIndex = carouselGames.length; // = 10
       updateCarouselPosition();
-      
-      console.log(`✅ Reset til index ${currentCarouselIndex} - seamless loop completed`);
-      
+
+      console.log(
+        `✅ Reset til index ${currentCarouselIndex} - seamless loop completed`
+      );
+
       // 3. Genaktiver smooth transitions og unlock navigation
       setTimeout(() => {
         carousel.style.transition = "transform 0.5s ease";
         isNavigating = false;
         console.log("🔓 Navigation unlocked efter reset");
       }, 10); // Kort delay for browser at processere stilændringer
-      
     }, 500); // Vent på nuværende animation (matchende CSS transition duration)
-    
   } else {
     // ===== NORMAL NAVIGATION =====
     // Ikke nær reset grænse, så bare unlock navigation efter standard delay
@@ -1011,14 +1079,14 @@ function nextSlide() {
 // Denne funktion håndterer navigation til forrige kort og seamless reset
 function prevSlide() {
   console.log("◀️ PrevSlide kaldt");
-  
+
   // ===== SPAM-CLICK BESKYTTELSE =====
   // Hvis en animation allerede kører, ignorer nye klik
   if (isNavigating) {
     console.log("⏸️ Navigation blokeret - animation i gang");
     return;
   }
-  
+
   // Lås navigation under denne operation
   isNavigating = true;
 
@@ -1029,33 +1097,35 @@ function prevSlide() {
   // ===== INFINITE SCROLL RESET LOGIC =====
   // Tjek om vi har nået grænsen for det første sæt kort
   const resetThreshold = carouselGames.length; // = 10 (starten af originale kort)
-  
+
   if (currentCarouselIndex < resetThreshold) {
-    console.log(`🔄 RESET TRIGGER: Index ${currentCarouselIndex} < ${resetThreshold}`);
-    
+    console.log(
+      `🔄 RESET TRIGGER: Index ${currentCarouselIndex} < ${resetThreshold}`
+    );
+
     // Vent på at den nuværende animation er færdig
     setTimeout(() => {
       const carousel = document.querySelector("#game-carousel");
-      
+
       // ===== SEAMLESS RESET SEQUENCE =====
       // 1. Fjern CSS transition for øjeblikkelig positionering
       carousel.style.transition = "none";
-      
+
       // 2. Spring frem til slutningen af andet sæt (index 19)
-      currentCarouselIndex = (carouselGames.length * 2) - 1; // = 19
+      currentCarouselIndex = carouselGames.length * 2 - 1; // = 19
       updateCarouselPosition();
-      
-      console.log(`✅ Reset til index ${currentCarouselIndex} - seamless loop completed`);
-      
+
+      console.log(
+        `✅ Reset til index ${currentCarouselIndex} - seamless loop completed`
+      );
+
       // 3. Genaktiver smooth transitions og unlock navigation
       setTimeout(() => {
         carousel.style.transition = "transform 0.5s ease";
         isNavigating = false;
         console.log("🔓 Navigation unlocked efter reset");
       }, 10); // Kort delay for browser at processere stilændringer
-      
     }, 500); // Vent på nuværende animation (matchende CSS transition duration)
-    
   } else {
     // ===== NORMAL NAVIGATION =====
     // Ikke nær reset grænse, så bare unlock navigation efter standard delay
@@ -1069,12 +1139,14 @@ function prevSlide() {
 // ===== KARRUSEL POSITIONS BEREGNING OG OPDATERING =====
 // Denne funktion beregner præcist hvor hvert kort skal placeres for at opnå perfekt centrering og smooth visual flow
 function updateCarouselPosition() {
-  console.log(`🎯 Opdaterer karrusel position til index: ${currentCarouselIndex}`);
-  
+  console.log(
+    `🎯 Opdaterer karrusel position til index: ${currentCarouselIndex}`
+  );
+
   // ===== DOM ELEMENT REFERENCER =====
   const carousel = document.querySelector("#game-carousel");
   const cards = document.querySelectorAll("#game-carousel .game-card");
-  
+
   if (!carousel) {
     console.error("❌ Karrusel container ikke fundet");
     return;
@@ -1082,87 +1154,102 @@ function updateCarouselPosition() {
 
   // ===== PRÆCISE MÅLINGER TIL SYMMETRISK LAYOUT =====
   // Disse værdier skal matche CSS styling for korrekt positionering
-  const cardWidth = 150;          // Standard kort bredde (normal størrelse)
-  const centerCardWidth = 200;    // Centreret kort bredde (skaleret op i CSS)
-  const cardGap = 24;             // 1.5rem gap mellem kort fra CSS
+  const cardWidth = 150; // Standard kort bredde (normal størrelse)
+  const centerCardWidth = 200; // Centreret kort bredde (skaleret op i CSS)
+  const cardGap = 24; // 1.5rem gap mellem kort fra CSS
   const totalCardWidth = cardWidth + cardGap; // Total plads per kort inkl. gap = 174px
 
   // ===== CONTAINER MÅLINGER =====
   const containerWidth = carousel.parentElement.offsetWidth;
-  console.log(`📐 Container bredde: ${containerWidth}px, kort plads: ${totalCardWidth}px`);
+  console.log(
+    `📐 Container bredde: ${containerWidth}px, kort plads: ${totalCardWidth}px`
+  );
 
   // ===== PERFEKT CENTRERING MATEMATIK =====
   // TRIN 1: Find container centrum position (f.eks. 800px / 2 = 400px)
   const containerCenter = containerWidth / 2;
-  
+
   // TRIN 2: Træk halvdelen af det aktive korts bredde fra centrum
   // Dette giver os start-positionen for at centrere det aktive kort
   // F.eks.: 400px - (200px / 2) = 300px fra venstre kant
-  const centerPosition = containerCenter - (centerCardWidth / 2);
-  
+  const centerPosition = containerCenter - centerCardWidth / 2;
+
   // TRIN 3: Beregn total forskydning baseret på aktuelt index
   // currentCarouselIndex * totalCardWidth = afstand til det ønskede kort
   // F.eks. index 5: 5 × 174px = 870px forskydning
   const indexOffset = currentCarouselIndex * totalCardWidth;
-  
+
   // TRIN 4: Samlet offset = centrering minus kort-position
   // F.eks.: 300px - 870px = -570px (move left for at vise kort #5 i center)
   let offset = centerPosition - indexOffset;
 
-  console.log(`🧮 Centrering matematik: ${containerCenter}px - ${centerCardWidth/2}px - ${indexOffset}px = ${offset}px`);
+  console.log(
+    `🧮 Centrering matematik: ${containerCenter}px - ${
+      centerCardWidth / 2
+    }px - ${indexOffset}px = ${offset}px`
+  );
 
   // ===== ANVEND CSS TRANSFORMATION =====
   // translateX() flytter hele carousel container horisontalt
   carousel.style.transform = `translateX(${offset}px)`;
-  
+
   console.log(`✅ CSS Transform anvendt: translateX(${offset}px)`);
 
   // ===== OPDATER VISUELLE FOKUS STATES =====
   // Fjern alle eksisterende fokus classes først
-  cards.forEach(card => card.classList.remove("center", "adjacent"));
-  
+  cards.forEach((card) => card.classList.remove("center", "adjacent"));
+
   // ===== INFINITE SCROLL LOGIK FOR VISUAL STATES =====
   cards.forEach((card, index) => {
     // VIGTIG: Find hvilket kort vi faktisk fokuserer på ved hjælp af modulo operation
     // Da vi bruger triple array [kopi1, original, kopi2], skal vi mappe tilbage til original indices
     const actualFocusIndex = currentCarouselIndex % carouselGames.length; // F.eks. index 15 → 5
-    const cardOriginalIndex = index % carouselGames.length;                // F.eks. card 25 → 5
-    
+    const cardOriginalIndex = index % carouselGames.length; // F.eks. card 25 → 5
+
     // ===== CENTER KORT STYLING =====
     // Det aktive kort får "center" class (større størrelse og fokus)
     if (cardOriginalIndex === actualFocusIndex) {
       card.classList.add("center");
-      console.log(`🎯 CENTER kort: index ${index} (original: ${cardOriginalIndex})`);
-    } 
+      console.log(
+        `🎯 CENTER kort: index ${index} (original: ${cardOriginalIndex})`
+      );
+    }
     // ===== ADJACENT KORT STYLING =====
     // Kortene ved siden af det aktive kort får "adjacent" class (mindre fade)
     else {
       // Beregn forrige og næste kort indices med wrap-around
-      const prevIndex = (actualFocusIndex - 1 + carouselGames.length) % carouselGames.length;
+      const prevIndex =
+        (actualFocusIndex - 1 + carouselGames.length) % carouselGames.length;
       const nextIndex = (actualFocusIndex + 1) % carouselGames.length;
-      
+
       if (cardOriginalIndex === prevIndex || cardOriginalIndex === nextIndex) {
         card.classList.add("adjacent");
-        console.log(`🔗 ADJACENT kort: index ${index} (original: ${cardOriginalIndex})`);
+        console.log(
+          `🔗 ADJACENT kort: index ${index} (original: ${cardOriginalIndex})`
+        );
       }
     }
     // ===== BACKGROUND KORT =====
     // Alle andre kort får standard styling (ingen ekstra classes)
     // Dette skaber smooth fade effect mod kanterne
   });
-  
-  console.log(`🎨 Visuelle states opdateret - fokus på kort ${currentCarouselIndex % carouselGames.length}`);
+
+  console.log(
+    `🎨 Visuelle states opdateret - fokus på kort ${
+      currentCarouselIndex % carouselGames.length
+    }`
+  );
 }
 
 // ===== TOUCH/SWIPE INTERACTION SYSTEM =====
 // Denne funktion sætter up event listeners for både mobile touch og desktop mouse interactions
 function addSwipeEvents() {
   console.log("🔧 Initialiserer touch/swipe event system");
-  
+
   // ===== DOM ELEMENT REFERENCER =====
   const carousel = document.querySelector("#game-carousel");
   const container = document.querySelector(".carousel-container");
-  
+
   if (!container || !carousel) {
     console.error("❌ Carousel elementer ikke fundet for swipe events");
     return;
@@ -1173,8 +1260,8 @@ function addSwipeEvents() {
   container.addEventListener("touchstart", handleTouchStart, {
     passive: false, // VIGTIG: Tillader preventDefault() i touchmove
   });
-  container.addEventListener("touchmove", handleTouchMove, { 
-    passive: false // VIGTIG: Forhindrer browser scroll under swipe
+  container.addEventListener("touchmove", handleTouchMove, {
+    passive: false, // VIGTIG: Forhindrer browser scroll under swipe
   });
   container.addEventListener("touchend", handleTouchEnd);
 
@@ -1184,7 +1271,7 @@ function addSwipeEvents() {
   container.addEventListener("mousemove", handleMouseMove);
   container.addEventListener("mouseup", handleMouseEnd);
   container.addEventListener("mouseleave", handleMouseEnd); // Cleanup hvis cursor forlader område
-  
+
   console.log("✅ Touch/swipe events tilføjet til carousel container");
 }
 
@@ -1193,12 +1280,12 @@ function addSwipeEvents() {
 function handleTouchStart(e) {
   // ===== GEM START POSITION =====
   startX = e.touches[0].clientX; // Horisontal position hvor touch begyndte
-  isDragging = true;             // Flag der indikerer aktiv touch session
-  
+  isDragging = true; // Flag der indikerer aktiv touch session
+
   // ===== VISUEL FEEDBACK =====
   // Tilføj dragging class for CSS styling under drag (f.eks. mindre transition)
   document.querySelector("#game-carousel").classList.add("dragging");
-  
+
   console.log(`👆 Touch start på position: ${startX}px`);
 }
 
@@ -1207,17 +1294,17 @@ function handleTouchStart(e) {
 function handleTouchMove(e) {
   // ===== GUARD CLAUSE =====
   if (!isDragging) return; // Ignorer hvis ingen aktiv touch session
-  
+
   // ===== FORHINDRE BROWSER SCROLL =====
   // KRITISK: Forhindrer browser i at scrolle siden under horizontal swipe
   e.preventDefault();
-  
+
   // ===== OPDATER AKTUEL POSITION =====
   currentX = e.touches[0].clientX; // Nuværende horisontal position
 
   // ===== BEREGN DRAG DISTANCE =====
   const diffX = startX - currentX; // Positiv = swipe left, negativ = swipe right
-  
+
   console.log(`👆 Touch move: ${currentX}px (diff: ${diffX}px)`);
 
   // ===== ANVEND LIVE VISUAL FEEDBACK =====
@@ -1237,7 +1324,7 @@ function handleTouchMove(e) {
   // Begræns visuelt feedback til maksimalt 80% af ét kort for at forhindre over-scroll
   const maxDrag = totalCardWidth * 0.8; // = ~139px maksimum
   let dragOffset = Math.max(-maxDrag, Math.min(maxDrag, diffX * -0.3)); // 30% responsivitet
-  
+
   // ===== ANVEND LIVE TRANSFORMATION =====
   carousel.style.transform = `translateX(${baseOffset + dragOffset}px)`;
 }
@@ -1247,18 +1334,20 @@ function handleTouchMove(e) {
 function handleTouchEnd(e) {
   // ===== GUARD CLAUSE =====
   if (!isDragging) return; // Ignorer hvis ingen aktiv touch session
-  
+
   // ===== CLEANUP DRAGGING STATE =====
   isDragging = false;
-  
+
   const carousel = document.querySelector("#game-carousel");
   carousel.classList.remove("dragging"); // Fjern dragging styling
-  
+
   // ===== EVALUÉR SWIPE DISTANCE =====
-  const diffX = startX - currentX;     // Total swipe distance
-  const threshold = 50;                // Minimum distance for kort navigation (pixels)
-  
-  console.log(`👆 Touch end: total swipe ${diffX}px (threshold: ${threshold}px)`);
+  const diffX = startX - currentX; // Total swipe distance
+  const threshold = 50; // Minimum distance for kort navigation (pixels)
+
+  console.log(
+    `👆 Touch end: total swipe ${diffX}px (threshold: ${threshold}px)`
+  );
 
   // ===== NAVIGATION DECISION =====
   // Kun tillad ét kort ad gangen - ingen multi-swipes
@@ -1290,15 +1379,15 @@ function handleTouchEnd(e) {
 // Initialiserer mouse drag interaction (desktop equivalent til touchstart)
 function handleMouseStart(e) {
   // ===== GEM START POSITION =====
-  startX = e.clientX;     // Horisontal position hvor mouse drag begyndte
-  isDragging = true;      // Flag der indikerer aktiv drag session
-  
+  startX = e.clientX; // Horisontal position hvor mouse drag begyndte
+  isDragging = true; // Flag der indikerer aktiv drag session
+
   // ===== VISUEL FEEDBACK =====
   document.querySelector("#game-carousel").classList.add("dragging");
-  
+
   // ===== FORHINDRE STANDARD MOUSE BEHAVIOR =====
   e.preventDefault(); // Forhindrer tekstselektion og andre standard mouse actions
-  
+
   console.log(`🖱️ Mouse drag start på position: ${startX}px`);
 }
 
@@ -1307,19 +1396,19 @@ function handleMouseStart(e) {
 function handleMouseMove(e) {
   // ===== GUARD CLAUSE =====
   if (!isDragging) return; // Ignorer hvis ingen aktiv drag session
-  
+
   // ===== OPDATER AKTUEL POSITION =====
   currentX = e.clientX; // Nuværende horisontal position
 
   // ===== BEREGN DRAG DISTANCE =====
   const diffX = startX - currentX; // Positiv = drag left, negativ = drag right
-  
+
   // ===== ANVEND LIVE VISUAL FEEDBACK =====
   // Samme beregninger som touch handlers for konsistent opførsel
   const carousel = document.querySelector("#game-carousel");
-  const cardWidth = 150;           // Standard kort bredde
-  const centerCardWidth = 200;     // Center kort bredde (skaleret i CSS)
-  const cardGap = 24;              // Gap mellem kort
+  const cardWidth = 150; // Standard kort bredde
+  const centerCardWidth = 200; // Center kort bredde (skaleret i CSS)
+  const cardGap = 24; // Gap mellem kort
   const totalCardWidth = cardWidth + cardGap; // = 174px per kort
   const containerWidth = carousel.parentElement.offsetWidth;
   const centerPosition = containerWidth / 2 - centerCardWidth / 2;
@@ -1341,7 +1430,7 @@ function handleMouseMove(e) {
 function handleMouseEnd(e) {
   // ===== GUARD CLAUSE =====
   if (!isDragging) return; // Ignorer hvis ingen aktiv drag session
-  
+
   // ===== CLEANUP DRAGGING STATE =====
   isDragging = false;
 
@@ -1349,10 +1438,12 @@ function handleMouseEnd(e) {
   carousel.classList.remove("dragging"); // Fjern dragging styling
 
   // ===== EVALUÉR DRAG DISTANCE =====
-  const diffX = startX - currentX;     // Total drag distance
-  const threshold = 50;                // Minimum distance for kort navigation (samme som touch)
+  const diffX = startX - currentX; // Total drag distance
+  const threshold = 50; // Minimum distance for kort navigation (samme som touch)
 
-  console.log(`🖱️ Mouse drag end: total distance ${diffX}px (threshold: ${threshold}px)`);
+  console.log(
+    `🖱️ Mouse drag end: total distance ${diffX}px (threshold: ${threshold}px)`
+  );
 
   // ===== NAVIGATION DECISION =====
   // Kun tillad ét kort ad gangen - ingen multi-drags
@@ -1394,7 +1485,9 @@ function addCarouselClickEvents() {
         // Kun det visuelt centrerede kort åbner modal
         const originalIndex = parseInt(card.dataset.originalIndex);
         const game = carouselGames[originalIndex];
-        console.log(`🎬 CENTER kort klikket: "${game.title}" (kort index: ${index})`);
+        console.log(
+          `🎬 CENTER kort klikket: "${game.title}" (kort index: ${index})`
+        );
         showGameModal(game);
       } else {
         // Hvis ikke-center kort klikkes, naviger til det kort
