@@ -326,7 +326,101 @@ function initFilterPanel() {
   window.updateFilterBadge = updateFilterBadge;
 }
 
-// Vis spin hjul og quiz
+
+// Find spin-container elementet (det eksisterende i HTML)
+const spinContainer = document.querySelector(".spin-container");
+
+// Tilføj klik-event til spin-container
+spinContainer.addEventListener("click", () => {
+  displaySpinContent();
+});
+
+// displaySpinContent funktion
+function displaySpinContent() {
+  const spinDialogContent = document.querySelector("#spin-dialog-content");
+
+  const contentHTML = `
+    <article class="spin-content">
+        <h2>Mit eget spin-indhold</h2>
+        <img src="images/spin-hjul-billede.png" alt="Spin billede" class="spin-poster">
+        <p>Her er min tekst, som jeg selv bestemmer.</p>
+        <button id="spin-button">Spin!</button>
+    </article>
+  `;
+
+
+  spinDialogContent.innerHTML = contentHTML;
+
+  // Knap-event
+  const spinButton = document.querySelector("#spin-button");
+  spinButton.addEventListener("click", () => {
+    console.log("🎉 Spin knap trykket!");
+    // Her kan du tilføje spin-hjul logik
+  });
+
+  // Åbn dialog (ligesom spil-modal)
+  const spinDialog = document.querySelector("#spin-dialog");
+  spinDialog.showModal();
+  document.body.classList.add("modal-open");
+
+  // Luk modal ved klik udenfor
+  spinDialog.addEventListener("click", (e) => {
+    if (e.target === spinDialog) {
+      spinDialog.close();
+      document.body.classList.remove("modal-open");
+    }
+  });
+}
+  
+
+
+// Find quiz-container elementet (det eksisterende i HTML)
+const quizContainer = document.querySelector(".quiz-container");
+
+// Tilføj klik-event til quiz-container
+quizContainer.addEventListener("click", () => {
+  displayQuizContent();
+});
+
+// displayQuizContent funktion
+function displayQuizContent() {
+  const quizDialogContent = document.querySelector("#quiz-dialog-content");
+
+  const contentHTML = `
+    <article class="quiz-content">
+        <h2>Mit eget quiz-indhold</h2>
+        <img src="images/quiz-billede.png" alt="Quiz billede" class="quiz-poster">
+        <p>Her er min tekst, som jeg selv bestemmer.</p>
+        <button id="quiz-button">Start Quiz!</button>
+    </article>
+  `;
+
+  // Erstat eksisterende indhold
+  quizDialogContent.innerHTML = contentHTML;
+
+  // Knap-event
+  const quizButton = document.querySelector("#quiz-button");
+  quizButton.addEventListener("click", () => {
+    console.log("🎉 Quiz knap trykket!");
+    // Her kan du tilføje quiz-logik
+  });
+
+  // Åbn dialog (ligesom spin-modal)
+  const quizDialog = document.querySelector("#quiz-dialog");
+  quizDialog.showModal();
+  document.body.classList.add("modal-open");
+
+  // Luk modal ved klik udenfor
+  quizDialog.addEventListener("click", (e) => {
+    if (e.target === quizDialog) {
+      quizDialog.close();
+      document.body.classList.remove("modal-open");
+    }
+  });
+}
+
+
+
 
 
 
