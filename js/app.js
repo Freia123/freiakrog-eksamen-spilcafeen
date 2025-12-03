@@ -341,9 +341,9 @@ function displaySpinContent() {
 
   const contentHTML = `
     <article class="spin-content">
-        <h2>Mit eget spin-indhold</h2>
+        <h2>Kan du ikke vælge spil?</h2>
         <img src="images/spin-hjul-billede.png" alt="Spin billede" class="spin-poster">
-        <p>Her er min tekst, som jeg selv bestemmer.</p>
+        <p>Lad tilfældet bestemme  og spin hjulet her!!</p>
         <button id="spin-button">Spin!</button>
     </article>
   `;
@@ -371,7 +371,6 @@ function displaySpinContent() {
     }
   });
 }
-  
 
 
 // Find quiz-container elementet (det eksisterende i HTML)
@@ -388,9 +387,9 @@ function displayQuizContent() {
 
   const contentHTML = `
     <article class="quiz-content">
-        <h2>Mit eget quiz-indhold</h2>
+        <h2>Kan du ikke vælge spil?</h2>
         <img src="images/quiz-billede.png" alt="Quiz billede" class="quiz-poster">
-        <p>Her er min tekst, som jeg selv bestemmer.</p>
+        <p>Tag denne quiz og find jeres spil!!!</p>
         <button id="quiz-button">Start Quiz!</button>
     </article>
   `;
@@ -418,11 +417,6 @@ function displayQuizContent() {
     }
   });
 }
-
-
-
-
-
 
 
 // ===== DATA HENTNING =====

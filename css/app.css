@@ -869,7 +869,7 @@ p {
 .quiz-poster {
   flex: 1;
   max-width: 400px;
-  height: auto;
+  height: 300px;
   object-fit: contain;
 }
 
@@ -929,7 +929,7 @@ dialog#spin-dialog {
   overflow: hidden;
   position: fixed;
   margin: auto;
-  width: min(95vw, 1000px);
+  width: min(95vw, 600px);
 }
 
 
@@ -938,6 +938,27 @@ dialog#spin-dialog::backdrop {
   backdrop-filter: blur(8px);
 }
 
+#spin-dialog-content {
+  padding: 2rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  align-items: start;
+  overflow-y: auto;
+  max-height: 90vh;
+  text-align: center;
+}
+
+#spin-button {
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius);
+  padding: 1rem 2rem;
+  font-size: 1.25rem;
+  cursor: pointer;
+  transition: var(--transition);
+}
 
 
 
@@ -955,7 +976,7 @@ dialog#quiz-dialog {
   overflow: hidden;
   position: fixed;
   margin: auto;
-  width: min(95vw, 1000px);
+  width: min(95vw, 600px);
 }
 
 
@@ -964,7 +985,27 @@ dialog#quiz-dialog::backdrop {
   backdrop-filter: blur(8px);
 }
 
+#quiz-dialog-content {
+  padding: 2rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  align-items: start;
+  overflow-y: auto;
+  max-height: 90vh;
+  text-align: center;
+}
 
+#quiz-button {
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius);
+  padding: 1rem 2rem;
+  font-size: 1.25rem;
+  cursor: pointer;
+  transition: var(--transition);
+}
 
 
 
