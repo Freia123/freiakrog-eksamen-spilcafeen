@@ -124,13 +124,13 @@ function displayFavoriteGame(game) {
   const gameHTML = `
     <article class="game-card">
         <img src="${game.image}" alt="Poster of ${game.title}" class="game-poster" />
-        <img src="Images/Favorit fyldt ikon.png" alt="Favorit" class="favorite-icon" onclick="toggleFavorite(event, '${game.title}')">
+        <img src="images/favorit-fyldt-ikon.png" alt="Favorit" class="favorite-icon" onclick="toggleFavorite(event, '${game.title}')">
       <div class="game-info">
-        <h2>${game.title} <span class="game-rating"><img src="Images/Stjerne ikon.png" alt="Rating" class="rating-icon"> ${game.rating}</span></h2>
+        <h2>${game.title} <span class="game-rating"><img src="images/stjerne-ikon.png" alt="Rating" class="rating-icon"> ${game.rating}</span></h2>
         <p class="game-shelf">Hylde ${game.shelf}</p>
-        <p class="game-players"><img src="Images/Spillere ikon.png" alt="Players" class="players-icon"> ${game.players.min}-${game.players.max} spillere</p>
-        <p class="game-playtime"><img src="Images/Tid ikon.png" alt="Playtime" class="playtime-icon"> ${game.playtime} minutter </p>
-        <p class="game-genre"><img src="Images/Kategori ikon.png" alt="Genre" class="genre-icon"> ${game.genre}</p>  
+        <p class="game-players"><img src="images/spillere-ikon.png" alt="Players" class="players-icon"> ${game.players.min}-${game.players.max} spillere</p>
+        <p class="game-playtime"><img src="images/tid-ikon.png" alt="Playtime" class="playtime-icon"> ${game.playtime} minutter </p>
+        <p class="game-genre"><img src="images/kategori-ikon.png" alt="Genre" class="genre-icon"> ${game.genre}</p>  
       </div>
     </article>
   `;
@@ -161,7 +161,7 @@ function toggleFavorite(event, gameTitle) {
   
   // Da vi er på favorit-siden, vil alle ikoner være fyldte
   // Så vi fjerner altid fra favoritter
-  favoriteIcon.src = "Images/Favorit tomt ikon.png";
+  favoriteIcon.src = "images/favorit-tomt-ikon.png";
   
   // Fjern fra favoritter
   favorites = favorites.filter(title => title !== gameTitle);
@@ -306,19 +306,19 @@ function showGameModal(game) {
   dialogContent.innerHTML = `
    <div class="game-poster-container">
      <img src="${game.image}" alt="Poster of ${game.title}" class="game-poster" />
-     <img src="Images/Favorit fyldt ikon.png" alt="Favorit" class="favorite-icon" onclick="toggleFavorite(event, '${game.title}')">
+     <img src="images/favorit-fyldt-ikon.png" alt="Favorit" class="favorite-icon" onclick="toggleFavorite(event, '${game.title}')">
    </div>
    <div class="dialog-game-info">
       <h1>${game.title} </h1>
       <h2 class="game-description">${game.description}</h2>
       <p class="game-shelf">Hylde ${game.shelf}</p>
       <div class="game-icons-grid">
-        <p class="game-genre"><img src="Images/Kategori ikon.png" alt="Genre" class="genre-icon"> ${game.genre}</p> 
-        <p class="game-rating"><img src="Images/Stjerne ikon.png" alt="Rating" class="rating-icon"> ${game.rating}</p>
-        <p class="game-players"><img src="Images/Spillere ikon.png" alt="Players" class="players-icon"> ${game.players.min}-${game.players.max} spillere</p>
-        <p class="game-playtime"><img src="Images/Tid ikon.png" alt="Playtime" class="playtime-icon"> ${game.playtime} minutter </p>
-        <p class="game-age"><img src="Images/Alder ikon.png" alt="Age" class="age-icon"> ${game.age}+</p>
-        <p class="game-difficulty"><img src="Images/Sværhedsgrad ikon.png" alt="Difficulty" class="difficulty-icon"> ${game.difficulty}</p>
+        <p class="game-genre"><img src="images/kategori-ikon.png" alt="Genre" class="genre-icon"> ${game.genre}</p> 
+        <p class="game-rating"><img src="images/stjerne-ikon.png" alt="Rating" class="rating-icon"> ${game.rating}</p>
+        <p class="game-players"><img src="images/spillere-ikon.png" alt="Players" class="players-icon"> ${game.players.min}-${game.players.max} spillere</p>
+        <p class="game-playtime"><img src="images/tid-ikon.png" alt="Playtime" class="playtime-icon"> ${game.playtime} minutter </p>
+        <p class="game-age"><img src="images/alder-ikon.png" alt="Age" class="age-icon"> ${game.age}+</p>
+        <p class="game-difficulty"><img src="images/svaerhedsgrad-ikon.png" alt="Difficulty" class="difficulty-icon"> ${game.difficulty}</p>
       </div>
       <p class="game-rules">${game.rules}</p>
       </div>

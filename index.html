@@ -11,7 +11,7 @@
     <header>
       <a href="index.html">
         <img
-          src="Images/Logo spilcafeen.png"
+          src="images/logo-spilcafeen.png"
           alt="Games App Logo"
           class="logo"
         />
@@ -29,7 +29,7 @@
         <div class="header-search">
           <!-- Klikbart søge-ikon som viser søgefeltet ved klik -->
           <button id="search-toggle" class="search-toggle" aria-label="Åbn søgning">
-            <img src="Images/Søge ikon.png" alt="Søg" class="search-icon" />
+            <img src="images/søge-ikon.png" alt="Søg" class="search-icon" />
           </button>
 
           <!-- Gemt søgefelt: vises når brugeren klikker på ikonet -->
@@ -48,7 +48,7 @@
           class="filter-toggle"
           aria-label="Åbn filtre"
         >
-          <img src="Images/Filtrerings ikon.png" alt="Filter" class="filter-icon" />
+          <img src="images/filtrerings-ikon.png" alt="Filter" class="filter-icon" />
           <span id="filter-badge" class="filter-badge" style="display: none"
             >0</span
           >
@@ -180,7 +180,54 @@
       <div class="carousel-container">
         <section id="game-carousel"></section>
       </div>
+      
 
+
+      <!-- Spin hjulet og quiz -->
+      <section>
+        <h1>Kan du ikke vælge?</h1>
+        <div class="spin-container">
+          <div class="spin-container-text">
+          <h2>Spin hjulet</h2>
+          <p>Kan du ikke vælge hvilket spil I vil spille? Spin jer frem til næste spil!!</p>
+        </div>
+        <div class="spin-poster">
+          <img src="images/spin-hjul-billede.png" class="spin-poster" />
+          </div>
+          </div>
+
+          <div class="quiz-container">
+            <div class="quiz-container-text">
+          <h2>Quiz dit spilvalg</h2>
+          <p>Svar på få spørgsmål - så finder vi det perfekte spil til jer!!</p>
+        </div>
+        <div class="quiz-poster">
+          <img src="images/quiz-billede.png" class="quiz-poster" />
+          </div>
+        </div>
+      </section>
+
+       <!-- Spil hjul dialog -->
+    <dialog id="spin-dialog">
+      <form method="dialog">
+        <button id="close-dialog" aria-label="Close">✕</button>
+        <div id="spin-dialog-content">
+          <!-- Spin details will be injected here via JavaScript -->
+        </div>
+      </form>
+    </dialog>
+
+     <!-- Quiz dialog -->
+    <dialog id="quiz-dialog">
+      <form method="dialog">
+        <button id="close-dialog" aria-label="Close">✕</button>
+        <div id="quiz-dialog-content">
+          <!-- Quiz details will be injected here via JavaScript -->
+        </div>
+      </form>
+    </dialog>
+
+      <!-- Alle spil -->
       <section>
         <div class="games-header">
           <h1>Alle spil</h1>
@@ -225,22 +272,22 @@
     <nav class="bottom-nav">
       <a href="index.html" class="bottom-nav-item bottom-nav-active">
         <div class="bottom-nav-icon">
-          <img src="Images/hus.svg" alt="Hjem" />
+          <img src="images/hus.svg" alt="Hjem" />
         </div>
       </a>
       <a href="profilside.html" class="bottom-nav-item">
         <div class="bottom-nav-icon">
-          <img src="Images/bruger-farvet.svg" alt="Bruger" />
+          <img src="images/bruger-farvet.svg" alt="Bruger" />
         </div>
       </a>
       <a href="favoritside.html" class="bottom-nav-item">
         <div class="bottom-nav-icon">
-          <img src="Images/hjerte-farvet.svg" alt="Favoritter" />
+          <img src="images/hjerte-farvet.svg" alt="Favoritter" />
         </div>
       </a>
       <a href="burgermenu.html" class="bottom-nav-item">
         <div class="bottom-nav-icon">
-          <img src="Images/burgermenu-farvet.svg" alt="Burgermenu" />
+          <img src="images/burgermenu-farvet.svg" alt="Burgermenu" />
         </div>
       </a>
     </nav>

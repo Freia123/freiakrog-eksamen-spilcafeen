@@ -76,7 +76,7 @@ body {
   font-size: 1rem;
   line-height: 1.6;
   background-color: #FAFAFA;
-  background-image: url('../Images/Baggrund\ -\ kodning\(mini\).svg');
+  background-image: url('../images/baggrund-kodning-mini.svg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -318,7 +318,7 @@ p {
 
 /* ============================================================
    FILTERBAR (SØG/SORT/FILTER/PLAYTIME/RATING-FILTER/RYD-KNAP)
-   ===================== */
+   ============================================================ */
 .filterbar {
   display: flex;
   gap: 1rem;
@@ -833,6 +833,76 @@ p {
 .close-btn:hover {
   background: transparent;
   color: var(--primary);
+}
+
+/* =====================
+   SPIN HJUL OG QUIZ
+   ===================== */
+
+/* Spin hjul */
+.quiz-container {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  transition: var(--transition);
+  cursor: pointer;
+  position: relative;
+}
+
+.quiz-container:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--secondary);
+}
+
+.quiz-container:focus {
+  outline: 3px solid var(--secondary);
+  outline-offset: 2px;
+}
+
+.quiz-poster {
+  width: 100%;
+  height: 400px;
+  object-fit: contain;
+  transition: var(--transition);
+}
+
+.quiz-container:hover .quiz-poster {
+  transform: scale(1.05);
+}
+
+/* Quiz */
+.spin-container {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  transition: var(--transition);
+  cursor: pointer;
+  position: relative;
+}
+
+.spin-container:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--secondary);
+}
+
+.spin-container:focus {
+  outline: 3px solid var(--secondary);
+  outline-offset: 2px;
+}
+
+.spin-poster {
+  width: 100%;
+  height: 400px;
+  object-fit: contain;
+  transition: var(--transition);
+}
+
+.spin-container:hover .spin-poster {
+  transform: scale(1.05);
 }
 
 

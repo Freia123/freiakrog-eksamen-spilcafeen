@@ -326,6 +326,11 @@ function initFilterPanel() {
   window.updateFilterBadge = updateFilterBadge;
 }
 
+// Vis spin hjul og quiz
+
+
+
+
 // ===== DATA HENTNING =====
 async function getGames() {
   // Hent data fra JSON - husk at URL er anderledes!
@@ -361,19 +366,19 @@ function displayGames(games) {
 function displayGame(game) {
   const gameList = document.querySelector("#game-list");
   const favoriteIconSrc = isFavorite(game.title)
-    ? "Images/Favorit fyldt ikon.png"
-    : "Images/Favorit tomt ikon.png";
+    ? "images/favorit-fyldt-ikon.png"
+    : "images/favorit-tomt-ikon.png";
 
   const gameHTML = `
     <article class="game-card">
         <img src="${game.image}" alt="Poster of ${game.title}" class="game-poster" />
         <img src="${favoriteIconSrc}" alt="Favorit" class="favorite-icon" onclick="toggleFavorite(event, '${game.title}')">
       <div class="game-info">
-        <h2>${game.title} <span class="game-rating"><img src="Images/Stjerne ikon.png" alt="Rating" class="rating-icon"> ${game.rating}</span></h2>
+        <h2>${game.title} <span class="game-rating"><img src="images/stjerne-ikon.png" alt="Rating" class="rating-icon"> ${game.rating}</span></h2>
         <p class="game-shelf">Hylde ${game.shelf}</p>
-        <p class="game-players"><img src="Images/Spillere ikon.png" alt="Players" class="players-icon"> ${game.players.min}-${game.players.max} spillere</p>
-        <p class="game-playtime"><img src="Images/Tid ikon.png" alt="Playtime" class="playtime-icon"> ${game.playtime} minutter </p>
-        <p class="game-genre"><img src="Images/Kategori ikon.png" alt="Genre" class="genre-icon"> ${game.genre}</p>  
+        <p class="game-players"><img src="images/spillere-ikon.png" alt="Players" class="players-icon"> ${game.players.min}-${game.players.max} spillere</p>
+        <p class="game-playtime"><img src="images/tid-ikon.png" alt="Playtime" class="playtime-icon"> ${game.playtime} minutter </p>
+        <p class="game-genre"><img src="images/kategori-ikon.png" alt="Genre" class="genre-icon"> ${game.genre}</p>  
       </div>
     </article>
   `;
@@ -388,10 +393,10 @@ function displayGame(game) {
   });
 
   // Tilføj keyboard support
-  newCard.addEventListener("keydown", function (event) {
+  newCard.addEventListener("keydown", function (event) { 
     if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
-      showGameModal(game);
+      event.preventDefault(); 
+      showGameModal(game); 
     }
   });
 }
@@ -814,16 +819,16 @@ function toggleFavorite(event, gameTitle) {
   let favorites = getFavorites();
 
   // Toggle favorit status baseret på billedets filnavn (mere robust med endsWith)
-  if (favoriteIcon.src.endsWith("Favorit%20tomt%20ikon.png") || favoriteIcon.src.endsWith("Favorit tomt ikon.png")) {
-    favoriteIcon.src = "Images/Favorit fyldt ikon.png";
+  if (favoriteIcon.src.endsWith("Favorit%20tomt%20ikon.png") || favoriteIcon.src.endsWith("favorit-tomt-ikon.png")) {
+    favoriteIcon.src = "images/favorit-fyldt-ikon.png";
     // Tilføj til favoritter
     if (!favorites.includes(gameTitle)) {
       favorites.push(gameTitle);
       saveFavorites(favorites);
     }
     console.log(`❤️ Tilføjet til favoritter: ${gameTitle}`);
-  } else if (favoriteIcon.src.endsWith("Favorit%20fyldt%20ikon.png") || favoriteIcon.src.endsWith("Favorit fyldt ikon.png")) {
-    favoriteIcon.src = "Images/Favorit tomt ikon.png";
+  } else if (favoriteIcon.src.endsWith("Favorit%20fyldt%20ikon.png") || favoriteIcon.src.endsWith("favorit-fyldt-ikon.png")) {
+    favoriteIcon.src = "images/favorit-tomt-ikon.png";
     // Fjern fra favoritter
     favorites = favorites.filter((title) => title !== gameTitle);
     saveFavorites(favorites);
@@ -848,8 +853,8 @@ function saveFavorites(favorites) {
 // Opdater alle favorit-ikoner for et specifikt spil
 function updateFavoriteIcons(gameTitle, isFavorite) {
   const iconSrc = isFavorite
-    ? "Images/Favorit fyldt ikon.png"
-    : "Images/Favorit tomt ikon.png";
+    ? "images/favorit-fyldt-ikon.png"
+    : "images/favorit-tomt-ikon.png";
 
   // Find alle ikoner for dette spil (både i grid og dialog)
   const allIcons = document.querySelectorAll(`img[onclick*="${gameTitle}"]`);
@@ -873,8 +878,8 @@ function showGameModal(game) {
   // Byg HTML struktur dynamisk
   const dialogContent = document.querySelector("#dialog-content");
   const favoriteIconSrc = isFavorite(game.title)
-    ? "Images/Favorit fyldt ikon.png"
-    : "Images/Favorit tomt ikon.png";
+    ? "images/favorit-fyldt-ikon.png"
+    : "images/favorit-tomt-ikon.png";
 
   dialogContent.innerHTML = `
    <div class="game-poster-container">
@@ -886,12 +891,12 @@ function showGameModal(game) {
       <h2 class="game-description">${game.description}</h2>
       <p class="game-shelf">Hylde ${game.shelf}</p>
       <div class="game-icons-grid">
-        <p class="game-genre"><img src="Images/Kategori ikon.png" alt="Genre" class="genre-icon"> ${game.genre}</p> 
-        <p class="game-rating"><img src="Images/Stjerne ikon.png" alt="Rating" class="rating-icon"> ${game.rating}</p>
-        <p class="game-players"><img src="Images/Spillere ikon.png" alt="Players" class="players-icon"> ${game.players.min}-${game.players.max} spillere</p>
-        <p class="game-playtime"><img src="Images/Tid ikon.png" alt="Playtime" class="playtime-icon"> ${game.playtime} minutter </p>
-        <p class="game-age"><img src="Images/Alder ikon.png" alt="Age" class="age-icon"> ${game.age}+</p>
-        <p class="game-difficulty"><img src="Images/Sværhedsgrad ikon.png" alt="Difficulty" class="difficulty-icon"> ${game.difficulty}</p>
+        <p class="game-genre"><img src="images/kategori-ikon.png" alt="Genre" class="genre-icon"> ${game.genre}</p> 
+        <p class="game-rating"><img src="images/stjerne-ikon.png" alt="Rating" class="rating-icon"> ${game.rating}</p>
+        <p class="game-players"><img src="images/spillere-ikon.png" alt="Players" class="players-icon"> ${game.players.min}-${game.players.max} spillere</p>
+        <p class="game-playtime"><img src="images/tid-ikon.png" alt="Playtime" class="playtime-icon"> ${game.playtime} minutter </p>
+        <p class="game-age"><img src="images/alder-ikon.png" alt="Age" class="age-icon"> ${game.age}+</p>
+        <p class="game-difficulty"><img src="images/svaerhedsgrad-ikon.png" alt="Difficulty" class="difficulty-icon"> ${game.difficulty}</p>
       </div>
       <p class="game-rules">${game.rules}</p>
       </div>
