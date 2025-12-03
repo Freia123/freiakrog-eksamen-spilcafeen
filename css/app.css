@@ -222,7 +222,7 @@ p {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.5rem 10px calc(0.5rem + env(safe-area-inset-bottom)) 10px; /* 10px yderste margin */
+  padding: 0.5rem 10px calc(0.5rem + env(safe-area-inset-bottom, 0px)) 10px; /* 10px yderste margin */
 }
 
 .bottom-nav-item {
@@ -1197,8 +1197,57 @@ dialog#game-dialog::backdrop {
   transition: var(--transition);
   z-index: 10;
 }
+#close-spin-dialog {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--text-light);
+  border: none;
+  border-radius: 50%;
+  width: 2.5rem;
+  height: 2.5rem;
+  font-size: 1.25rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+  z-index: 10;
+}
+
+#close-quiz-dialog {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--text-light);
+  border: none;
+  border-radius: 50%;
+  width: 2.5rem;
+  height: 2.5rem;
+  font-size: 1.25rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+  z-index: 10;
+}
 
 #close-dialog:hover {
+  background: var(--error);
+  color: white;
+  transform: scale(1.1);
+}
+
+#close-spin-dialog:hover {
+  background: var(--error);
+  color: white;
+  transform: scale(1.1);
+}
+
+#close-quiz-dialog:hover {
   background: var(--error);
   color: white;
   transform: scale(1.1);
