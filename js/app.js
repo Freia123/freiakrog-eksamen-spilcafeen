@@ -466,7 +466,7 @@ function displayGame(game) {
         <p class="game-shelf">Hylde ${game.shelf}</p>
         <p class="game-players"><img src="images/spillere-ikon.png" alt="Players" class="players-icon"> ${game.players.min}-${game.players.max} spillere</p>
         <p class="game-playtime"><img src="images/tid-ikon.png" alt="Playtime" class="playtime-icon"> ${game.playtime} minutter </p>
-        <p class="game-genre"><img src="images/kategori-ikon.png" alt="Genre" class="genre-icon"> ${game.genre}</p>  
+        <p class="game-genre"><img src="images/kategori-ikon.png" alt="Genre" class="genre-icon"> ${game.genre}</p>
       </div>
     </article>
   `;
@@ -987,6 +987,12 @@ function showGameModal(game) {
         <p class="game-difficulty"><img src="images/svaerhedsgrad-ikon.png" alt="Difficulty" class="difficulty-icon"> ${game.difficulty}</p>
       </div>
       <p class="game-rules">${game.rules}</p>
+       </div>
+       <p class="video-rules"> Videoregler </p>
+       <button id="choose-game-button">Vælg spil</button>
+       <p class="game-info">Ved valg af spil har du mulighed for at holde øje med, 
+       hvilke spil du har spillet, hvem du har spillet med, 
+       resultater fra hvert spil og meget mere. Dette gælder kun hvis du er logget ind.</p>
       </div>
   `;
 

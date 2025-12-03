@@ -1306,6 +1306,40 @@ dialog#game-dialog::backdrop {
   text-align: left;
 }
 
+.video-rules {
+  font-size: 0.9rem;
+  line-height: 1.4;
+  word-wrap: break-word;
+  max-width: 90%;
+  margin: 0 auto;          /* fjernet afstand over/under */
+  text-align: center;
+  color: var(--primary);
+  text-decoration: underline;
+}
+
+.game-info {
+  font-size: 0.8rem;
+  line-height: 1.4;
+  word-wrap: break-word;
+  max-width: 90%;
+  margin: 0 auto 0.1rem auto;          /* fjernet afstand over/under */
+  text-align: left;
+}
+
+#choose-game-button {
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius);
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: var(--transition);
+  max-width: 200px;
+  width: 100%;
+  margin: 0 auto;    /* minimal afstand over/under */
+}
+
 /* Dialog ikoner i Grid layout */
 #dialog-content .game-icons-grid {
   display: grid;
