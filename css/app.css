@@ -29,9 +29,9 @@
 }
 
 
-/* ===========
+/* ===============
     CSS FONTS
-   =========== */
+   =============== */
 
 .poppins-medium {
   font-family: "Poppins", sans-serif;
@@ -915,55 +915,8 @@ p {
   max-width: 600px;
 }
 
-/* Spin dialog styling */
-
-dialog#spin-dialog {
-  border: none;
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-lg);
-  padding: 0;
-  max-width: min(95vw, 1000px);
-  max-height: 90vh;
-  background: var(--bg-card);
-  color: var(--text);
-  overflow: hidden;
-  position: fixed;
-  margin: auto;
-  width: min(95vw, 600px);
-}
-
-
-dialog#spin-dialog::backdrop {
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(8px);
-}
-
-#spin-dialog-content {
-  padding: 2rem;
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 2rem;
-  align-items: start;
-  overflow-y: auto;
-  max-height: 90vh;
-  text-align: center;
-}
-
-#spin-button {
-  background: var(--primary);
-  color: white;
-  border: none;
-  border-radius: var(--radius);
-  padding: 1rem 2rem;
-  font-size: 1.25rem;
-  cursor: pointer;
-  transition: var(--transition);
-}
-
-
-
-/* Quiz dialog styling */
-
+/* Spin & Quiz dialog styling */
+dialog#spin-dialog,
 dialog#quiz-dialog {
   border: none;
   border-radius: var(--radius);
@@ -979,12 +932,13 @@ dialog#quiz-dialog {
   width: min(95vw, 600px);
 }
 
-
+dialog#spin-dialog::backdrop,
 dialog#quiz-dialog::backdrop {
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(8px);
 }
 
+#spin-dialog-content,
 #quiz-dialog-content {
   padding: 2rem;
   display: grid;
@@ -996,6 +950,7 @@ dialog#quiz-dialog::backdrop {
   text-align: center;
 }
 
+#spin-button,
 #quiz-button {
   background: var(--primary);
   color: white;
@@ -1179,25 +1134,7 @@ dialog#game-dialog::backdrop {
   backdrop-filter: blur(8px);
 }
 
-#close-dialog {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background: rgba(255, 255, 255, 0.9);
-  color: var(--text-light);
-  border: none;
-  border-radius: 50%;
-  width: 2.5rem;
-  height: 2.5rem;
-  font-size: 1.25rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: var(--transition);
-  z-index: 10;
-}
-#close-spin-dialog {
+#close-dialog, #close-spin-dialog, #close-quiz-dialog {
   position: absolute;
   top: 1rem;
   right: 1rem;
@@ -1216,38 +1153,7 @@ dialog#game-dialog::backdrop {
   z-index: 10;
 }
 
-#close-quiz-dialog {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background: rgba(255, 255, 255, 0.9);
-  color: var(--text-light);
-  border: none;
-  border-radius: 50%;
-  width: 2.5rem;
-  height: 2.5rem;
-  font-size: 1.25rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: var(--transition);
-  z-index: 10;
-}
-
-#close-dialog:hover {
-  background: var(--error);
-  color: white;
-  transform: scale(1.1);
-}
-
-#close-spin-dialog:hover {
-  background: var(--error);
-  color: white;
-  transform: scale(1.1);
-}
-
-#close-quiz-dialog:hover {
+#close-dialog:hover, #close-spin-dialog:hover, #close-quiz-dialog:hover {
   background: var(--error);
   color: white;
   transform: scale(1.1);
