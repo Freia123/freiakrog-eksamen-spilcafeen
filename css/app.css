@@ -5,16 +5,16 @@
   /* Colors */
   --primary: rgb(199, 2, 0);
   --secondary: rgba(199, 2, 0, 0.25);
-  --primary-light: #FAFAFA;
+  --primary-light: #fafafa;
   --secondary-light: #3c4043;
 
   /* Textfarver */
-  --text: #1E1B1B;
-  --text-light: #1E1B1B;  /*Bruges ikke*/
+  --text: #1e1b1b;
+  --text-light: #1e1b1b; /*Bruges ikke*/
 
   /* Baggrundsfarver */
-  --bg: #FAFAFA;
-  --bg-card: #F1F1F1;
+  --bg: #fafafa;
+  --bg-card: #f1f1f1;
 
   /* Semantiske farver */
   --success: #34a853;
@@ -27,7 +27,6 @@
   --radius: 1rem;
   --transition: transform 0.2s ease;
 }
-
 
 /* ===============
     CSS FONTS
@@ -46,7 +45,6 @@
   font-weight: 600;
   font-style: normal;
 }
-
 
 .dm-sans-bold {
   font-family: "DM Sans", sans-serif;
@@ -75,8 +73,8 @@ body {
   font-family: poppins-medium, sans-serif;
   font-size: 1rem;
   line-height: 1.6;
-  background-color: #FAFAFA;
-  background-image: url('../images/baggrund-kodning-mini-.svg');
+  background-color: #fafafa;
+  background-image: url("../images/baggrund-kodning-mini-.svg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -100,13 +98,13 @@ body.modal-open {
 }
 
 span {
-    color: var(--text-light);
+  color: var(--text-light);
 }
 
 h1 {
   font-family: poppins-bold, sans-serif;
   font-size: 36px;
-margin-top: 30px;
+  margin-top: 30px;
   color: var(--text);
 }
 
@@ -118,11 +116,10 @@ h2 {
 }
 
 p {
-    font-family: DM sans-serif-medium, sans-serif;
-    font-size: 16px;
-    color: var(--text);
+  font-family: DM sans-serif-medium, sans-serif;
+  font-size: 16px;
+  color: var(--text);
 }
-
 
 /* =======================
    ACTIVE FILTERS DISPLAY
@@ -147,7 +144,7 @@ p {
   white-space: nowrap; /* Forhindrer linjeskift */
 }
 
-.active-filters-list { 
+.active-filters-list {
   display: flex;
   gap: 0.5rem;
   flex-wrap: wrap;
@@ -195,11 +192,11 @@ p {
     align-items: flex-start;
     gap: 0.5rem;
   }
-  
+
   .active-filters-label {
     font-size: 0.8rem;
   }
-  
+
   .active-filter-tag {
     font-size: 0.8rem;
     padding: 0.4rem 0.8rem;
@@ -248,7 +245,7 @@ p {
 .bottom-nav-label {
   font-size: 0.75rem; /* Tekst under ikon */
   font-weight: 500;
-  transition: var(--transition); 
+  transition: var(--transition);
   text-align: center;
 }
 
@@ -315,7 +312,6 @@ p {
   line-height: 1.6;
 }
 
-
 /* ============================================================
    FILTERBAR (SØG/SORT/FILTER/PLAYTIME/RATING-FILTER/RYD-KNAP)
    ============================================================ */
@@ -359,7 +355,7 @@ p {
 #genre-select,
 #sort-select {
   min-width: 160px;
-  cursor: pointer; 
+  cursor: pointer;
 }
 
 /* Playtime filter styling */
@@ -482,8 +478,8 @@ p {
    HEADER DESIGN OG FILTRERING
    ============================= */
 
-  header {
-  background: #FAFAFA;
+header {
+  background: #fafafa;
   backdrop-filter: blur(20px) saturate(180%);
   border-bottom: 1px solid rgba(172, 198, 201, 0.2);
   color: var(--text);
@@ -531,7 +527,7 @@ p {
   box-shadow: none; /* Fjernet box-shadow ved fokus */
 }
 
-/* HEADER CONTROLS (SEARCH + FILTER) */  /* Højre side af header */
+/* HEADER CONTROLS (SEARCH + FILTER) */ /* Højre side af header */
 .header-controls {
   display: flex;
   align-items: center;
@@ -661,7 +657,6 @@ p {
   font-size: 1.05rem;
   border-radius: calc(var(--radius) * 0.5);
 }
-
 
 /* Mobil: gør søgefeltet fuld-bredde og mere synligt */
 @media (max-width: 768px) {
@@ -891,13 +886,13 @@ p {
 
 /* Tekst styling */
 .spin-container-text h2,
-.quiz-container-text h2 { 
-  margin-bottom: 12px; 
+.quiz-container-text h2 {
+  margin-bottom: 12px;
 }
 
 .spin-container-text p,
-.quiz-container-text p { 
-  margin-bottom: 0; 
+.quiz-container-text p {
+  margin-bottom: 0;
 }
 
 /* Layout: Spin & Quiz side by side */
@@ -962,8 +957,61 @@ dialog#quiz-dialog::backdrop {
   transition: var(--transition);
 }
 
+/* Responsive: make quiz dialog and content work well on small screens (spin virker allerede grundet str på billedet)*/ 
+@media (max-width: 600px) {
+  .quiz-poster {
+    max-width: 70%;
+    width: 70%;
+    height: auto;
+    object-fit: contain;
+  }
+}
 
+  .spin-container,
+  .quiz-container {
+    max-width: 100%;
+    width: 100%;
+  }
 
+  .spin-inner-wrapper,
+  .quiz-inner-wrapper {
+    flex-direction: column;
+    align-items: center;
+    padding: 12px;
+    gap: 12px;
+  }
+
+  .spin-poster, 
+  .quiz-poster {
+    max-width: 100%;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+  }
+
+  dialog#spin-dialog,
+  dialog#quiz-dialog {
+    width: 95vw;
+    max-width: 95vw;
+    margin: 0.5rem auto;
+    max-height: calc(100vh - 2rem);
+    border-radius: 0.75rem;
+  }
+
+  #spin-dialog-content,
+  #quiz-dialog-content {
+    padding: 1rem;
+    gap: 1rem;
+    grid-template-columns: 1fr;
+    text-align: left;
+  }
+
+  #spin-button,
+  #quiz-button {
+    width: 100%;
+    font-size: 1rem;
+    padding: 0.75rem 1rem;
+  }
 
 /* =====================
    GAME GRID & CARDS
@@ -1030,12 +1078,12 @@ dialog#quiz-dialog::backdrop {
 }
 
 .game-shelf {
- color: var(--text-light); 
- border: 2px solid var(--primary); /* Tykkelse, tekst og farve */
- padding: 5px 30px; /* Afstand mellem tekst og kant */
- display: inline-block; /* Så kanten passer præcist til teksten */
- border-radius: 25px;
- margin-bottom: 20px;
+  color: var(--text-light);
+  border: 2px solid var(--primary); /* Tykkelse, tekst og farve */
+  padding: 5px 30px; /* Afstand mellem tekst og kant */
+  display: inline-block; /* Så kanten passer præcist til teksten */
+  border-radius: 25px;
+  margin-bottom: 20px;
 }
 .rating-icon {
   width: 25px;
@@ -1046,8 +1094,7 @@ dialog#quiz-dialog::backdrop {
 .playtime-icon,
 .genre-icon,
 .age-icon, /* Detaljeside alders ikon */
-.difficulty-icon /* Detaljeside sværhedsgrad ikon */
-{
+.difficulty-icon /* Detaljeside sværhedsgrad ikon */ {
   width: 30px;
   margin-right: 10px;
 }
@@ -1097,17 +1144,17 @@ dialog#quiz-dialog::backdrop {
 
 /* FAST STØRRELSE OG STABILITET FOR FAVORIT-IKONER */
 .favorite-icon {
-  width: 32px;             /* fast bredde */
-  height: 32px;            /* fast højde */
-  object-fit: contain;      /* skalerer billedet korrekt uden deformation */
-  cursor: pointer;          /* giver visuelt feedback */
-  transition: none;         /* fjern animation ved klik */
+  width: 32px; /* fast bredde */
+  height: 32px; /* fast højde */
+  object-fit: contain; /* skalerer billedet korrekt uden deformation */
+  cursor: pointer; /* giver visuelt feedback */
+  transition: none; /* fjern animation ved klik */
 }
 
 .favorite-icon:active,
 .favorite-icon:focus {
-  transform: none;          /* fjern enhver skalering ved klik/fokus */
-  outline: none;            /* fjern fokus-outline */
+  transform: none; /* fjern enhver skalering ved klik/fokus */
+  outline: none; /* fjern fokus-outline */
 }
 
 /* =====================
@@ -1128,13 +1175,14 @@ dialog#game-dialog {
   width: min(95vw, 1000px);
 }
 
-
 dialog#game-dialog::backdrop {
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(8px);
 }
 
-#close-dialog, #close-spin-dialog, #close-quiz-dialog {
+#close-dialog,
+#close-spin-dialog,
+#close-quiz-dialog {
   position: absolute;
   top: 1rem;
   right: 1rem;
@@ -1153,7 +1201,9 @@ dialog#game-dialog::backdrop {
   z-index: 10;
 }
 
-#close-dialog:hover, #close-spin-dialog:hover, #close-quiz-dialog:hover {
+#close-dialog:hover,
+#close-spin-dialog:hover,
+#close-quiz-dialog:hover {
   background: var(--error);
   color: white;
   transform: scale(1.1);
@@ -1194,13 +1244,13 @@ dialog#game-dialog::backdrop {
 }
 
 .dialog-game-info .game-shelf {
- color: var(--text-light); 
- border: 2px solid var(--primary);
- padding: 5px 100px;
- display: inline-block;
- border-radius: 25px;
- margin-bottom: 20px;
- margin-top: 30px;
+  color: var(--text-light);
+  border: 2px solid var(--primary);
+  padding: 5px 100px;
+  display: inline-block;
+  border-radius: 25px;
+  margin-bottom: 20px;
+  margin-top: 30px;
 }
 
 #dialog-content .game-rules {
@@ -1217,7 +1267,7 @@ dialog#game-dialog::backdrop {
   line-height: 1.4;
   word-wrap: break-word;
   max-width: 90%;
-  margin: 0 auto;          /* fjernet afstand over/under */
+  margin: 0 auto; /* fjernet afstand over/under */
   text-align: center;
   color: var(--primary);
   text-decoration: underline;
@@ -1228,7 +1278,7 @@ dialog#game-dialog::backdrop {
   line-height: 1.4;
   word-wrap: break-word;
   max-width: 90%;
-  margin: 0 auto 0.1rem auto;          /* fjernet afstand over/under */
+  margin: 0 auto 0.1rem auto; /* fjernet afstand over/under */
   text-align: left;
 }
 
@@ -1243,7 +1293,7 @@ dialog#game-dialog::backdrop {
   transition: var(--transition);
   max-width: 200px;
   width: 100%;
-  margin: 0 auto;    /* minimal afstand over/under */
+  margin: 0 auto; /* minimal afstand over/under */
 }
 
 /* Dialog ikoner i Grid layout */
@@ -1253,7 +1303,7 @@ dialog#game-dialog::backdrop {
   grid-template-rows: auto auto;
   column-gap: 5rem;
   margin: 1rem auto; /* Samme margin som game-rules */
-  justify-content: center;  /* centrér hele gridlayoutet */
+  justify-content: center; /* centrér hele gridlayoutet */
   justify-items: start; /* men behold venstrejusteret indhold */
   align-items: center;
   margin-bottom: 30px;
@@ -1351,7 +1401,7 @@ dialog#game-dialog::backdrop {
 
 /* Smartphones/iPhone (breakpoints) */
 @media (max-width: 480px) {
-   main {
+  main {
     padding-bottom: 5rem; /* Extra space for bottom nav on mobile */
   }
   header {
@@ -1384,7 +1434,6 @@ dialog#game-dialog::backdrop {
   }
 }
 
-
 /* RESPONSIVT DESIGN FOR DIALOG MODALET */
 
 /* Tablet og større mobile enheder (breakpoints) */
@@ -1395,10 +1444,10 @@ dialog#game-dialog::backdrop {
     gap: 1.5rem;
     text-align: center;
   }
-   .game-poster-container {
+  .game-poster-container {
     margin: 20px auto;
   }
-   #dialog-content img.game-poster {
+  #dialog-content img.game-poster {
     max-width: 300px;
   }
 }
@@ -1406,12 +1455,12 @@ dialog#game-dialog::backdrop {
 /* Smartphones/iPhone (breakpoints) */
 @media (max-width: 480px) {
   dialog#game-dialog {
-  max-width: 100vw;
-  width: 100vw;
-  height: 100vh;
-  max-height: 100vh;
-  border-radius: 0;
-  margin: 0;
+    max-width: 100vw;
+    width: 100vw;
+    height: 100vh;
+    max-height: 100vh;
+    border-radius: 0;
+    margin: 0;
   }
   #dialog-content {
     padding: 1rem;
@@ -1450,13 +1499,13 @@ dialog#game-dialog::backdrop {
 
 /* GAME GRID RESPONSIVE LAYOUT */
 
-/* Mobile først - 1 kolonne */   /* SLET?? */
+/* Mobile først - 1 kolonne */ /* SLET?? */
 #game-list {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 1.5rem;
   padding: 1rem;
-} 
+}
 
 /* Tablet - 2 kolonner */
 @media (min-width: 600px) {
@@ -1505,27 +1554,27 @@ dialog#game-dialog::backdrop {
     margin: 0 0.25rem;
     min-width: 70px;
   }
-  
+
   .bottom-nav-icon {
     font-size: 1.25rem;
     margin-bottom: 0.2rem;
   }
-  
+
   .bottom-nav-label {
     font-size: 0.7rem;
   }
 }
 
 /* NO FAVORITES RESPONSIVE STYLING */
-  @media (max-width: 768px) {
+@media (max-width: 768px) {
   .no-favorites {
-   padding: 2rem 1rem;
+    padding: 2rem 1rem;
   }
-  
+
   .no-favorites h3 {
     font-size: 1.25rem;
   }
-  
+
   .no-favorites p {
     font-size: 1rem;
   }
@@ -1538,7 +1587,7 @@ dialog#game-dialog::backdrop {
 .carousel-container {
   position: relative;
   overflow-x: hidden;
-  overflow-y: visible;  
+  overflow-y: visible;
   /*margin: 2rem 0;*/
   padding: 7rem 0;
   max-width: 100vw;
@@ -1565,7 +1614,7 @@ dialog#game-dialog::backdrop {
 #game-carousel .game-card {
   min-width: 150px;
   max-width: 150px;
-  height: 300px;        /* Fast højde kun for karrussel-kort */
+  height: 300px; /* Fast højde kun for karrussel-kort */
   flex-shrink: 0;
   background: var(--bg-card);
   border-radius: var(--radius);
@@ -1573,54 +1622,54 @@ dialog#game-dialog::backdrop {
   transition: all 0.5s ease;
   cursor: pointer;
   box-shadow: var(--shadow);
-  transform: scale(1);  /* Normal størrelse som standard */
+  transform: scale(1); /* Normal størrelse som standard */
   position: relative;
-  display: flex;        /* Flexbox kun for karrussel-kort */
+  display: flex; /* Flexbox kun for karrussel-kort */
   flex-direction: column;
 }
 
 #game-carousel .game-card::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.3);  /* Mørk overlay på normale kort */
+  background: rgba(0, 0, 0, 0.3); /* Mørk overlay på normale kort */
   z-index: 1;
   transition: opacity 0.5s ease;
 }
 
 #game-carousel .game-card.center {
-  transform: scale(1.5);  /* Center kort er 20% større */
+  transform: scale(1.5); /* Center kort er 20% større */
   z-index: 2;
-  min-width: 200px;        /* Matcher JavaScript centerCardWidth */
-  max-width: 200px;        /* Matcher JavaScript centerCardWidth */
+  min-width: 200px; /* Matcher JavaScript centerCardWidth */
+  max-width: 200px; /* Matcher JavaScript centerCardWidth */
 }
 
 #game-carousel .game-card.center::before {
-  opacity: 0;  /* Fjern overlay fra center kort */
+  opacity: 0; /* Fjern overlay fra center kort */
 }
 
 #game-carousel .game-card.adjacent {
-  transform: scale(1.2);  /* Adjacent kort i normal størrelse */
+  transform: scale(1.2); /* Adjacent kort i normal størrelse */
 }
 
 #game-carousel .game-card.adjacent::before {
-  background: rgba(0, 0, 0, 0.15);  /* Lidt lysere overlay for adjacent kort */
+  background: rgba(0, 0, 0, 0.15); /* Lidt lysere overlay for adjacent kort */
 }
 
 #game-carousel .game-card:hover {
-  transform: scale(1.1);  /* Hover gør normale kort lidt større */
+  transform: scale(1.1); /* Hover gør normale kort lidt større */
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
 }
 
 #game-carousel .game-card.center:hover {
-  transform: scale(1.65);  /* Hover gør center kort endnu større */
+  transform: scale(1.65); /* Hover gør center kort endnu større */
 }
 
 #game-carousel .game-card:hover::before {
-  opacity: 0.1;  /* Reducer overlay på hover for bedre visibility */
+  opacity: 0.1; /* Reducer overlay på hover for bedre visibility */
 }
 
 #game-carousel .game-poster {
@@ -1702,21 +1751,21 @@ dialog#game-dialog::backdrop {
     align-items: baseline;
     gap: 0.5rem;
   }
-  
+
   .games-header h2 {
     font-size: 1.25rem;
     margin: 0;
   }
-  
+
   .sort-controls {
     align-self: auto;
     align-items: baseline;
   }
-  
+
   .sort-controls label {
     font-size: 0.8rem;
   }
-  
+
   .sort-controls select {
     font-size: 0.8rem;
     min-width: 120px;

@@ -159,6 +159,23 @@ function initApp() {
 
   // Filter panel toggle functionality
   initFilterPanel();
+
+  // Attach spin/quiz triggers here (DOM guaranteed)
+  const spinContainer = document.querySelector(".spin-container");
+  if (spinContainer) {
+    spinContainer.addEventListener("click", (e) => {
+      e.preventDefault();
+      displaySpinContent();
+    });
+  }
+
+  const quizContainer = document.querySelector(".quiz-container");
+  if (quizContainer) {
+    quizContainer.addEventListener("click", (e) => {
+      e.preventDefault();
+      displayQuizContent();
+    });
+  }
 }
 
 // Init søge-ikon toggle funktionalitet
@@ -326,14 +343,9 @@ function initFilterPanel() {
   window.updateFilterBadge = updateFilterBadge;
 }
 
-
-// Find spin-container elementet (det eksisterende i HTML)
-const spinContainer = document.querySelector(".spin-container");
-
-// Tilføj klik-event til spin-container
-spinContainer.addEventListener("click", () => {
-  displaySpinContent();
-});
+// Note: spin/quiz triggers are attached inside initApp to guarantee
+// the DOM is ready and to avoid duplicate listeners when the file is
+// reloaded during development.
 
 // displaySpinContent funktion
 function displaySpinContent() {
@@ -348,7 +360,6 @@ function displaySpinContent() {
     </article>
   `;
 
-
   spinDialogContent.innerHTML = contentHTML;
 
   // Knap-event
@@ -362,24 +373,23 @@ function displaySpinContent() {
   const spinDialog = document.querySelector("#spin-dialog");
   spinDialog.showModal();
   document.body.classList.add("modal-open");
-
-  // Luk modal ved klik udenfor
-  spinDialog.addEventListener("click", (e) => {
+  // Luk modal ved klik udenfor (one-time listener)
+  const spinBackdropHandler = (e) => {
     if (e.target === spinDialog) {
       spinDialog.close();
-      document.body.classList.remove("modal-open");
     }
-  });
+  };
+  spinDialog.addEventListener("click", spinBackdropHandler, { once: true });
+
+  // Sørg for at fjerne modal-open uanset hvordan dialogen lukkes
+  spinDialog.addEventListener(
+    "close",
+    () => document.body.classList.remove("modal-open"),
+    { once: true }
+  );
 }
 
-
-// Find quiz-container elementet (det eksisterende i HTML)
-const quizContainer = document.querySelector(".quiz-container");
-
-// Tilføj klik-event til quiz-container
-quizContainer.addEventListener("click", () => {
-  displayQuizContent();
-});
+// (listener attachment moved to initApp)
 
 // displayQuizContent funktion
 function displayQuizContent() {
@@ -409,15 +419,21 @@ function displayQuizContent() {
   quizDialog.showModal();
   document.body.classList.add("modal-open");
 
-  // Luk modal ved klik udenfor
-  quizDialog.addEventListener("click", (e) => {
+  // Luk modal ved klik udenfor (one-time listener)
+  const quizBackdropHandler = (e) => {
     if (e.target === quizDialog) {
       quizDialog.close();
-      document.body.classList.remove("modal-open");
     }
-  });
-}
+  };
+  quizDialog.addEventListener("click", quizBackdropHandler, { once: true });
 
+  // Sørg for at fjerne modal-open uanset hvordan dialogen lukkes
+  quizDialog.addEventListener(
+    "close",
+    () => document.body.classList.remove("modal-open"),
+    { once: true }
+  );
+}
 
 // ===== DATA HENTNING =====
 async function getGames() {
@@ -481,10 +497,10 @@ function displayGame(game) {
   });
 
   // Tilføj keyboard support
-  newCard.addEventListener("keydown", function (event) { 
+  newCard.addEventListener("keydown", function (event) {
     if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault(); 
-      showGameModal(game); 
+      event.preventDefault();
+      showGameModal(game);
     }
   });
 }
@@ -907,7 +923,10 @@ function toggleFavorite(event, gameTitle) {
   let favorites = getFavorites();
 
   // Toggle favorit status baseret på billedets filnavn (mere robust med endsWith)
-  if (favoriteIcon.src.endsWith("Favorit%20tomt%20ikon.png") || favoriteIcon.src.endsWith("favorit-tomt-ikon.png")) {
+  if (
+    favoriteIcon.src.endsWith("Favorit%20tomt%20ikon.png") ||
+    favoriteIcon.src.endsWith("favorit-tomt-ikon.png")
+  ) {
     favoriteIcon.src = "images/favorit-fyldt-ikon.png";
     // Tilføj til favoritter
     if (!favorites.includes(gameTitle)) {
@@ -915,7 +934,10 @@ function toggleFavorite(event, gameTitle) {
       saveFavorites(favorites);
     }
     console.log(`❤️ Tilføjet til favoritter: ${gameTitle}`);
-  } else if (favoriteIcon.src.endsWith("Favorit%20fyldt%20ikon.png") || favoriteIcon.src.endsWith("favorit-fyldt-ikon.png")) {
+  } else if (
+    favoriteIcon.src.endsWith("Favorit%20fyldt%20ikon.png") ||
+    favoriteIcon.src.endsWith("favorit-fyldt-ikon.png")
+  ) {
     favoriteIcon.src = "images/favorit-tomt-ikon.png";
     // Fjern fra favoritter
     favorites = favorites.filter((title) => title !== gameTitle);
