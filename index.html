@@ -9,6 +9,7 @@
 
   <body>
     <header>
+      <!-- Logo link, som fører brugeren tilbage til forsiden -->
       <a href="index.html">
         <img
           src="images/logo-spilcafeen.png"
@@ -17,160 +18,175 @@
         />
       </a>
 
-      <!-- Location filter i midten -->
+      <!-- Lokationsfilter dropdown, som giver mulighed for at vælge spil baseret på lokation -->
       <div class="header-location">
         <select id="location-select" class="location-dropdown">
           <option value="all">Alle lokationer</option>
         </select>
       </div>
 
-      <!-- Header søgefelt og filter -->
+      <!-- Header sektion med søgefelt og filterknapper -->
       <div class="header-controls">
         <div class="header-search">
-          <!-- Klikbart søge-ikon som viser søgefeltet ved klik -->
+          <!-- Knappen til at åbne og lukke søgefeltet -->
           <button id="search-toggle" class="search-toggle" aria-label="Åbn søgning">
             <img src="images/soege-ikon.png" alt="Søg" class="search-icon" />
           </button>
 
-          <!-- Gemt søgefelt: vises når brugeren klikker på ikonet -->
+          <!-- Gemt søgefelt, som vises når brugeren klikker på søgeikonet -->
           <div id="header-search-wrapper" class="header-search-wrapper" aria-hidden="true">
             <input
               type="text"
               id="header-search-input"
-              placeholder="Søg spil..."
+              placeholder="Søg spil..."        
               aria-label="Søg spil"
             />
           </div>
         </div>
 
+        <!-- Knappen til at åbne og lukke filterpanelet -->
         <button
           id="filter-toggle"
           class="filter-toggle"
           aria-label="Åbn filtre"
         >
           <img src="images/filtrerings-ikon.png" alt="Filter" class="filter-icon" />
+          <!-- Symbol der viser antallet af aktive filtre (skjult når der ikke er nogen) -->
           <span id="filter-badge" class="filter-badge" style="display: none"
             >0</span
           >
         </button>
       </div>
 
-      <!-- Filter dropdown panel -->
-      <div class="filter-panel" id="filter-panel">
-        <div class="filter-panel-content">
-          <h3>Filtrer spil</h3>
+ <!-- Filter dropdown panel, hvor brugeren kan filtrere spil -->
+<div class="filter-panel" id="filter-panel">
+  <div class="filter-panel-content">
+    <!-- Overskrift for filterpanelet -->
+    <h3>Filtrer spil</h3>
 
-          <div class="filter-row">
-            <label for="header-sort-select">Sorter efter</label>
-            <select id="header-sort-select">
-              <option value="all">Ingen sortering</option>
-              <option value="title">Titel (A-Å)</option>
-              <option value="title2">Titel (Å-A)</option>
-              <option value="rating">Mest populære</option>
-            </select>
-          </div>
+    <!-- Sorteringsfilter -->
+    <div class="filter-row">
+      <label for="header-sort-select">Sorter efter</label>
+      <select id="header-sort-select">
+        <option value="all">Ingen sortering</option> <!-- Standard -->
+        <option value="title">Titel (A-Å)</option> <!-- Sorter alfabetisk stigende -->
+        <option value="title2">Titel (Å-A)</option> <!-- Sorter alfabetisk faldende -->
+        <option value="rating">Mest populære</option> <!-- Sorter efter rating/popularitet -->
+      </select>
+    </div>
 
-          <div class="filter-row">
-            <label for="header-genre-select">Kategori</label>
-            <select id="header-genre-select">
-              <option value="none">Alle kategorier</option>
-            </select>
-          </div>
+    <!-- Genre/kategori filter -->
+    <div class="filter-row">
+      <label for="header-genre-select">Kategori</label>
+      <select id="header-genre-select">
+        <option value="none">Alle kategorier</option> <!-- Standardvalg: alle kategorier -->
+      </select>
+    </div>
 
-          <div class="filter-row">
-            <label>Antal spillere</label>
-            <div class="range-inputs">
-              <input
-                type="number"
-                id="header-players-from"
-                placeholder="Fra"
-                min="1"
-                max="8"
-                step="1"
-              />
-            </div>
-          </div>
-
-          <div class="filter-row">
-            <label>Spilletid (min):</label>
-            <div class="range-inputs">
-              <input
-                type="number"
-                id="header-playtime-from"
-                placeholder="Fra"
-                min="0"
-                max="300"
-                step="15"
-              />
-              <span>til</span>
-              <input
-                type="number"
-                id="header-playtime-to"
-                placeholder="Til"
-                min="0"
-                max="300"
-                step="15"
-              />
-            </div>
-          </div>
-
-          <div class="filter-row">
-            <label for="header-difficulty-select">Sværhedsgrad</label>
-            <select id="header-difficulty-select">
-              <option value="none">Alle sværhedsgrader</option>
-              <option value="Let">Let</option>
-              <option value="Mellem">Mellem</option>
-              <option value="Svær">Svær</option>
-            </select>
-          </div>
-
-          <div class="filter-row">
-            <label>Min. Alder</label>
-            <div class="range-inputs">
-              <input
-                type="number"
-                id="header-age-from"
-                placeholder="Fra"
-                min="0"
-                max="100"
-                step="1"
-              />
-            </div>
-          </div>
-
-          <div class="filter-row">
-            <label>Rating:</label>
-            <div class="range-inputs">
-              <input
-                type="number"
-                id="header-rating-from"
-                placeholder="Fra"
-                min="0"
-                max="5"
-                step="1"
-              />
-              <span>til</span>
-              <input
-                type="number"
-                id="header-rating-to"
-                placeholder="Til"
-                min="0"
-                max="5"
-                step="1"
-              />
-            </div>
-          </div>
-
-          <div class="filter-actions">
-            <button id="header-clear-filters" class="clear-btn">
-              Ryd alle filtre
-            </button>
-            <button id="filter-close" class="close-btn">Vis resultater</button>
-          </div>
-        </div>
+    <!-- Antal spillere filter -->
+    <div class="filter-row">
+      <label>Antal spillere</label>
+      <div class="range-inputs">
+        <input
+          type="number"
+          id="header-players-from"
+          placeholder="Fra"
+          min="1"
+          max="8"
+          step="1"
+        />
       </div>
+    </div>
+
+    <!-- Spilletid filter -->
+    <div class="filter-row">
+      <label>Spilletid (min):</label>
+      <div class="range-inputs">
+        <input
+          type="number"
+          id="header-playtime-from"
+          placeholder="Fra"
+          min="0"
+          max="300"
+          step="15"
+        />
+        <span>til</span>
+        <input
+          type="number"
+          id="header-playtime-to"
+          placeholder="Til"
+          min="0"
+          max="300"
+          step="15"
+        />
+      </div>
+    </div>
+
+    <!-- Sværhedsgrad filter -->
+    <div class="filter-row">
+      <label for="header-difficulty-select">Sværhedsgrad</label>
+      <select id="header-difficulty-select">
+        <option value="none">Alle sværhedsgrader</option> <!-- Standard -->
+        <option value="Let">Let</option>
+        <option value="Mellem">Mellem</option>
+        <option value="Svær">Svær</option>
+      </select>
+    </div>
+
+    <!-- Minimum alder filter -->
+    <div class="filter-row">
+      <label>Min. Alder</label>
+      <div class="range-inputs">
+        <input
+          type="number"
+          id="header-age-from"
+          placeholder="Fra"
+          min="0"
+          max="100"
+          step="1"
+        />
+      </div>
+    </div>
+
+    <!-- Rating filter -->
+    <div class="filter-row">
+      <label>Rating:</label>
+      <div class="range-inputs">
+        <input
+          type="number"
+          id="header-rating-from"
+          placeholder="Fra"
+          min="0"
+          max="5"
+          step="1"
+        />
+        <span>til</span>
+        <input
+          type="number"
+          id="header-rating-to"
+          placeholder="Til"
+          min="0"
+          max="5"
+          step="1"
+        />
+      </div>
+    </div>
+
+    <!-- Knapper for handling af filtre -->
+    <div class="filter-actions">
+      <!-- Nulstil alle filtre -->
+      <button id="header-clear-filters" class="clear-btn">
+        Ryd alle filtre
+      </button>
+      <!-- Luk filterpanelet og vis resultater -->
+      <button id="filter-close" class="close-btn">Vis resultater</button>
+    </div>
+  </div>
+</div>
     </header>
 
+
+     <!-- Tekst over karrussel -->
     <main>
       <section>
         <h1>Mest populære</h1>
@@ -183,29 +199,29 @@
       
 
 
-      <!-- Spin hjulet og quiz -->
+      <!-- Spin hjulet og quiz på forsiden-->
       <section>
           <h1>Kan du ikke vælge?</h1>
-          <div class="spin-quiz-wrapper"> 
-          <div class="spin-container">
-            <div class="spin-inner-wrapper">
-              <div class="spin-container-text">
+          <div class="spin-quiz-wrapper"> <!-- både spin hjulet og quiz i en wrapper -->
+          <div class="spin-container">  <!-- holder hele spin hjul sektionen på forsiden -->
+            <div class="spin-inner-wrapper"> <!-- indhold af hjul på forsiden -->
+              <div class="spin-container-text"> <!-- tekst på forsiden -->
                 <h2>Spin hjulet</h2>
                 <p>Kan du ikke vælge hvilket spil I vil spille? Spin jer frem til næste spil!!</p>
               </div>
-              <div class="spin-poster">
+              <div class="spin-poster"> <!-- billede af hjul på forsiden -->
                 <img src="images/spin-hjul-billede.png" alt="Spin Hjul" class="spin-poster" />
               </div>
             </div>
           </div>
 
-            <div class="quiz-container">
-              <div class="quiz-inner-wrapper">
-              <div class="quiz-container-text">
+            <div class="quiz-container"> <!-- holder hele quiz sektionen på forsiden -->
+              <div class="quiz-inner-wrapper"> <!-- indhold af quiz på forsiden -->
+              <div class="quiz-container-text"> <!-- tekst på forsiden -->
             <h2>Quiz dit spilvalg</h2>
             <p>Svar på få spørgsmål - så finder vi det perfekte spil til jer!!</p>
           </div>
-          <div class="quiz-poster">
+          <div class="quiz-poster"> <!-- billede af quiz på forsiden -->
             <img src="images/quiz-billede.png" alt="Quiz" class="quiz-poster" />
             </div>
           </div>
@@ -213,7 +229,7 @@
         </div>
       </section>
 
-       <!-- Spil hjul dialog -->
+       <!-- Spil hjul dialog (åbnet/pop up ved klik på spin hjulet)-->
     <dialog id="spin-dialog">
       <form method="dialog">
         <button id="close-spin-dialog" aria-label="Close">✕</button>
@@ -223,7 +239,7 @@
       </form>
     </dialog>
 
-     <!-- Quiz dialog -->
+     <!-- Quiz dialog (åbnet/pop up ved klik på quiz billedet)-->
     <dialog id="quiz-dialog">
       <form method="dialog">
         <button id="close-quiz-dialog" aria-label="Close">✕</button>
@@ -234,7 +250,7 @@
     </dialog>
 
 
-      <!-- Alle spil -->
+      <!-- Alle spil (sorter efter)-->
       <section>
         <div class="games-header">
           <h1>Alle spil</h1>
@@ -265,7 +281,7 @@
       <section id="game-list"></section>
     </main>
 
-    <!-- Game Modal -->
+    <!-- Game Modal (pop up)-->
     <dialog id="game-dialog">
       <form method="dialog">
         <button id="close-dialog" aria-label="Close">✕</button>
