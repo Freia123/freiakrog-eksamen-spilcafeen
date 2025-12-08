@@ -859,6 +859,8 @@ header {
   outline-offset: 2px;
 }
 
+
+
 /* Poster styling */
 .spin-poster,
 .quiz-poster {
@@ -907,7 +909,8 @@ header {
 .spin-container,
 .quiz-container {
   flex: 1;
-  max-width: 600px;
+  max-width: 450px;
+  max-height: 400px;
 }
 
 /* Spin & Quiz dialog styling */
@@ -917,14 +920,39 @@ dialog#quiz-dialog {
   border-radius: var(--radius);
   box-shadow: var(--shadow-lg);
   padding: 0;
-  max-width: min(95vw, 1000px);
-  max-height: 90vh;
+  max-width: min(200px, 600px);
+  max-height: 600px;
   background: var(--bg-card);
   color: var(--text);
   overflow: hidden;
   position: fixed;
   margin: auto;
   width: min(95vw, 600px);
+}
+
+
+#spin-button,
+#quiz-button,
+#spin-restart,
+#quiz-restart,
+#spin-open-game,
+#quiz-open-game {
+  width: 100%;
+  max-width: 300px;  /* Begrænser knappernes bredde */
+  margin: 0.5rem auto;
+  display: block;
+}
+
+.spin-result-image {
+  max-width: 400px;
+}
+
+.quiz-result-image {
+  max-width: 400px;   
+  width: 100%;        
+  height: auto;       
+  display: block;     
+  margin: 0 auto;
 }
 
 dialog#spin-dialog::backdrop,
@@ -945,6 +973,7 @@ dialog#quiz-dialog::backdrop {
   text-align: center;
 }
 
+/* Start/Spin & Quiz buttons */
 #spin-button,
 #quiz-button {
   background: var(--primary);
@@ -955,68 +984,152 @@ dialog#quiz-dialog::backdrop {
   font-size: 1.25rem;
   cursor: pointer;
   transition: var(--transition);
+  width: 100%;
 }
 
-/* Responsive: make quiz dialog and content work well on small screens (spin virker allerede grundet str på billedet)*/ 
+/* Quiz option buttons styling */
+.quiz-answer {
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius);
+  padding: 1rem 2rem;
+  font-size: 1.25rem;
+  cursor: pointer;
+  transition: var(--transition);
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.quiz-answer:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.quiz-answer:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow);
+}
+
+/* Responsive: make quiz dialog and content work well on small screens */ 
 @media (max-width: 600px) {
   .quiz-poster {
-    max-width: 70%;
-    width: 70%;
-    height: auto;
-    object-fit: contain;
+    /* This block is now overridden by the new dialog poster rules below */
   }
 }
 
-  .spin-container,
-  .quiz-container {
-    max-width: 100%;
+/* Styling til knap i spin og quiz "Spin igen" og "Tag quiz igen"*/ 
+#quiz-restart, #spin-restart {
+  background: var(--primary-light);
+  color: rgb(0, 0, 0);
+  border: 2px solid var(--primary);
+  border-radius: var(--radius);
+  padding: 1rem 2rem;
+  font-size: 1.25rem;
+  cursor: pointer;
+  transition: var(--transition);
+  width: 100%;
+  margin-top: 1rem;
+}
+
+#quiz-restart, #spin-restart:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+#quiz-restart:active, #spin-restart:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow);
+}
+
+/* Styling til knap i spin og quiz "Gå til spil"*/ 
+#quiz-open-game, #spin-open-game {
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius);
+  padding: 1rem 2rem;
+  font-size: 1.25rem;
+  cursor: pointer;
+  transition: var(--transition);
+  width: 100%;
+  margin-top: 1rem;
+}
+
+#quiz-open-game, #spin-open-game:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+#quiz-open-game:active, #spin-open-game:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow);
+}
+
+.spin-container,
+.quiz-container {
+  max-width: 100%;
+  width: 100%;
+}
+
+.spin-inner-wrapper,
+.quiz-inner-wrapper {
+  flex-direction: column;
+  align-items: center;
+  padding: 12px;
+  gap: 12px;
+  
+}
+
+
+/* SPIN & QUIZ dialog posters - responsive and container-bound */
+dialog#spin-dialog .spin-poster,
+dialog#quiz-dialog .quiz-poster {
+  width: 100%;
+  max-width: 600px;
+  height: auto;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  dialog#spin-dialog .spin-poster,
+  dialog#quiz-dialog .quiz-poster {
+    max-width: 90%;
     width: 100%;
   }
+}
 
-  .spin-inner-wrapper,
-  .quiz-inner-wrapper {
-    flex-direction: column;
-    align-items: center;
-    padding: 12px;
-    gap: 12px;
-  }
+dialog#spin-dialog,
+dialog#quiz-dialog {
+  max-width: 600px;
+  margin: 0.5rem auto;
+  max-height: calc(100vh - 2rem);
+  min-height: 80px;
+  border-radius: 0.75rem;
+  margin: 3rem auto;
+}
 
-  .spin-poster, 
-  .quiz-poster {
-    max-width: 100%;
-    width: 100%;
-    height: auto;
-    object-fit: cover;
-  }
+#spin-dialog-content,
+#quiz-dialog-content {
+  padding: 1rem;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+  text-align: center;
+}
 
-  dialog#spin-dialog,
-  dialog#quiz-dialog {
-    width: 95vw;
-    max-width: 95vw;
-    margin: 0.5rem auto;
-    max-height: calc(100vh - 2rem);
-    border-radius: 0.75rem;
-  }
-
-  #spin-dialog-content,
-  #quiz-dialog-content {
-    padding: 1rem;
-    gap: 1rem;
-    grid-template-columns: 1fr;
-    text-align: left;
-  }
-
-  #spin-button,
-  #quiz-button {
-    width: 100%;
-    font-size: 1rem;
-    padding: 0.75rem 1rem;
-  }
+#spin-button,
+#quiz-button {
+  width: 100%;
+  font-size: 1rem;
+  padding: 0.75rem 1rem;
+}
 
 /* =====================
    GAME GRID & CARDS
    ===================== */
-/* TODO !!! */
 
 .game-card {
   background: var(--bg-card);

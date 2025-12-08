@@ -351,87 +351,193 @@ function initFilterPanel() {
 function displaySpinContent() {
   const spinDialogContent = document.querySelector("#spin-dialog-content");
 
-  const contentHTML = `
+  // FØRSTE SKÆRM - SPIN HJUL
+  spinDialogContent.innerHTML = `
     <article class="spin-content">
         <h2>Kan du ikke vælge spil?</h2>
-        <img src="images/spin-hjul-billede.png" alt="Spin billede" class="spin-poster">
-        <p>Lad tilfældet bestemme  og spin hjulet her!!</p>
-        <button id="spin-button">Spin!</button>
+        <img src="images/spin-hjul-billede.png" alt="Spin billede" class="spin-poster" id="spin-wheel">
+        <p>Lad tilfældet bestemme og spin hjulet her!!</p>
+        <button id="spin-button">Spin hjulet!</button>
     </article>
   `;
 
-  spinDialogContent.innerHTML = contentHTML;
-
-  // Knap-event
-  const spinButton = document.querySelector("#spin-button");
-  spinButton.addEventListener("click", () => {
-    console.log("🎉 Spin knap trykket!");
-    // Her kan du tilføje spin-hjul logik
-  });
-
-  // Åbn dialog (ligesom spil-modal)
   const spinDialog = document.querySelector("#spin-dialog");
   spinDialog.showModal();
   document.body.classList.add("modal-open");
-  // Luk modal ved klik udenfor (one-time listener)
-  const spinBackdropHandler = (e) => {
-    if (e.target === spinDialog) {
-      spinDialog.close();
-    }
-  };
-  spinDialog.addEventListener("click", spinBackdropHandler, { once: true });
 
-  // Sørg for at fjerne modal-open uanset hvordan dialogen lukkes
+  spinDialog.addEventListener(
+    "click",
+    (e) => {
+      if (e.target === spinDialog) spinDialog.close();
+    },
+    { once: true }
+  );
   spinDialog.addEventListener(
     "close",
     () => document.body.classList.remove("modal-open"),
     { once: true }
   );
-}
 
-// (listener attachment moved to initApp)
+  const spinButton = document.querySelector("#spin-button");
+  spinButton.addEventListener("click", () => {
+    console.log("Spin knap trykket!");
+
+    const wheel = document.querySelector("#spin-wheel");
+
+    // ===== ANIMATION =====
+    const spins = 5 + Math.floor(Math.random() * 5); // Tilfældig antal spins
+    wheel.style.transition = "transform 1.5s ease-out";
+    wheel.offsetWidth; // force reflow så browser registrerer ændringen
+    wheel.style.transform = `rotate(${spins * 360}deg)`;
+
+    // Vælg tilfældigt spil med det samme
+    if (!allGames || allGames.length === 0) return;
+    const randomIndex = Math.floor(Math.random() * allGames.length);
+    const game = allGames[randomIndex];
+
+    // Vis resultat næsten med det samme
+    spinDialogContent.innerHTML = `
+      <article class="spin-result">
+        <h2>Jeres spil er:</h2>
+        <p>Vi anbefaler: <strong>${game.title}</strong></p>
+        <img src="${game.image}" alt="${game.title}" class="spin-result-image">
+        <button id="spin-restart">Spin igen</button>
+        <button id="spin-open-game" data-game="${game.title
+          .toLowerCase()
+          .replace(/ /g, "-")}">Gå til spil</button>
+      </article>
+    `;
+
+    // Spin igen
+    const restartBtn = document.querySelector("#spin-restart");
+    restartBtn.addEventListener("click", () => displaySpinContent());
+
+    // Gå til spil
+    const goToGameBtn = document.querySelector("#spin-open-game");
+    goToGameBtn.addEventListener("click", () => {
+      spinDialog.close();
+      const gameId = goToGameBtn.dataset.game;
+      const gameDialog = document.getElementById(`${gameId}-dialog`);
+      if (gameDialog) gameDialog.showModal();
+    });
+  });
+}
 
 // displayQuizContent funktion
 function displayQuizContent() {
   const quizDialogContent = document.querySelector("#quiz-dialog-content");
 
-  const contentHTML = `
-    <article class="quiz-content">
-        <h2>Kan du ikke vælge spil?</h2>
-        <img src="images/quiz-billede.png" alt="Quiz billede" class="quiz-poster">
-        <p>Tag denne quiz og find jeres spil!!!</p>
-        <button id="quiz-button">Start Quiz!</button>
+  // ---- FØRSTE SIDE QUIZ/ FORSIDE ----
+  quizDialogContent.innerHTML = `
+    <article class="quiz-frontpage">
+      <h2>Kan du ikke vælge spil?</h2>
+      <img src="images/quiz-billede.png" alt="Quiz billede" class="quiz-poster">
+      <p>Tag quizzen og find jeres spil!</p>
+      <button id="quiz-button">Tag quiz</button>
     </article>
   `;
 
-  // Erstat eksisterende indhold
-  quizDialogContent.innerHTML = contentHTML;
+  // Quiz spørgsmål data
+  const questions = [
+    {
+      question: "Hvilket af disse spil tiltaler jer mest?",
+      options: ["Skak", "Det Dårlige Selskab", "UNO", "Partners"]
+    },
+    {
+      question: "Hvilket tema tiltaler jer mest?",
+      options: ["Historie og kultur", "Fantasy og sci-fi", "Hverdagskomik og party", "Mystik og gåder"]
+    },
+    {
+      question: "Hvor kreativt skal spillet være?",
+      options: ["Ingen kreativitet, bare logik og regler", "Lidt kreativt input", "Masser af kreativitet og fantasi"]
+    },
+    {
+      question: "Vil I grine eller koncentrere jer?",
+      options: ["Grin og sjov", "Blandet", "Fuld fokus"]
+    },
+    {
+      question: "Vil I have held eller strategi?",
+      options: ["Ren held", "Blanding af held og strategi", "Kun strategi"]
+    },
+    {
+      question: "Vil I have et hurtigt eller langt spil?",
+      options: ["Hurtigt, let at lære", "Medium spil, lidt dybere strategi", "Længere spil"]
+    }
+  ];
 
-  // Knap-event
-  const quizButton = document.querySelector("#quiz-button");
-  quizButton.addEventListener("click", () => {
-    console.log("🎉 Quiz knap trykket!");
-    // Her kan du tilføje quiz-logik
+  let currentQuestion = 0;
+  let userAnswers = [];
+
+  // ---- Knap til at starte quiz ----
+  const startBtn = document.getElementById("quiz-button");
+  startBtn.addEventListener("click", () => {
+    showQuestion(0);
   });
 
-  // Åbn dialog (ligesom spin-modal)
+  function showQuestion(index) {
+    const q = questions[index];
+    quizDialogContent.innerHTML = `
+      <h2>Spørgsmål ${index + 1}</h2>
+      <p>${q.question}</p>
+      ${q.options.map(opt => `<button class="quiz-answer" data-answer="${opt}">${opt}</button>`).join("")}
+    `;
+    quizDialogContent.querySelectorAll(".quiz-answer").forEach(btn => {
+      btn.addEventListener("click", (e) => {
+        userAnswers.push(e.target.dataset.answer);
+        currentQuestion++;
+        if (currentQuestion < questions.length) {
+          showQuestion(currentQuestion);
+        } else {
+          showResult();
+        }
+      });
+    });
+  }
+
+  function showResult() {
+    const resultName = userAnswers[0];
+
+    const gameImages = {
+      "Skak": "images/quiz-svar-skak.webp",
+      "Partners": "images/quiz-svar-partners.webp",
+      "UNO": "images/quiz-svar-uno.webp",
+      "Det Dårlige Selskab": "images/quiz-svar-det-daarlige-selskab.webp"
+    };
+    const resultImage = gameImages[resultName] || "images/quiz-billede.png";
+
+    quizDialogContent.innerHTML = `
+      <h2>JERES SPIL ER:</h2>
+      <p>Vi anbefaler spillet baseret på dine svar: <strong>${resultName}</strong></p>
+      <img src="${resultImage}" alt="${resultName}" class="quiz-result-image">
+      <button id='quiz-restart'>Tag quiz igen</button>
+      <button id='quiz-open-game' data-game="${resultName.toLowerCase().replace(/ /g,'-')}">Gå til spil</button>
+    `;
+
+    // Restart knap
+    const restartBtn = document.querySelector("#quiz-restart");
+    restartBtn.addEventListener("click", () => displayQuizContent());
+
+    // Gå til spil knap
+    const goToGameBtn = document.querySelector("#quiz-open-game");
+    goToGameBtn.addEventListener("click", () => {
+      const quizDialog = document.querySelector("#quiz-dialog");
+      quizDialog.close();
+      const gameId = goToGameBtn.dataset.game;
+      const gameDialog = document.getElementById(`${gameId}-dialog`);
+      if (gameDialog) gameDialog.showModal();
+    });
+  }
+
+  // Åbn dialog hvis ikke allerede åben
   const quizDialog = document.querySelector("#quiz-dialog");
   quizDialog.showModal();
   document.body.classList.add("modal-open");
 
-  // Luk modal ved klik udenfor (one-time listener)
-  const quizBackdropHandler = (e) => {
-    if (e.target === quizDialog) {
-      quizDialog.close();
-    }
-  };
-  quizDialog.addEventListener("click", quizBackdropHandler, { once: true });
-
-  // Sørg for at fjerne modal-open uanset hvordan dialogen lukkes
-  quizDialog.addEventListener(
-    "close",
-    () => document.body.classList.remove("modal-open"),
-    { once: true }
+  quizDialog.addEventListener("click", (e) => {
+    if (e.target === quizDialog) quizDialog.close();
+  });
+  quizDialog.addEventListener("close", () =>
+    document.body.classList.remove("modal-open")
   );
 }
 
