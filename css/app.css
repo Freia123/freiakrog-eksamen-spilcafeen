@@ -1817,9 +1817,9 @@ dialog#game-dialog::backdrop {
   text-shadow: none;
 }
 
-/* =================================
+/* =============================================
    SPILOVERSIGT STYLING (ALLE SPIL–OVERSIGT)
-   ================================= */
+   ============================================= */
 
 .games-header {
   display: flex;
@@ -1901,4 +1901,41 @@ dialog#game-dialog::backdrop {
     flex: unset;
     padding: 8px;
   }
+}
+
+
+/* ===============================================
+  STYLING AF MENUSIDE ("Siden er under udvikling")
+   =============================================== */
+
+/* Container til under-udvikling-besked */
+.under-development {
+  text-align: center;
+  padding: 4rem 2rem; /* Samme som tidligere no-favorites */
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  margin: 2rem 0;
+}
+
+/* Knap til at gå tilbage til spil */
+.under-dev-button {
+  display: inline-block;
+  background: var(--primary);
+  color: white;
+  padding: 0.75rem 2rem;
+  border-radius: var(--radius);
+  text-decoration: none;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  margin-top: 1rem;
+  box-shadow: var(--shadow);
+}
+
+/* Hover-effekt */
+.under-dev-button:hover {
+  background: var(--secondary);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
 }
