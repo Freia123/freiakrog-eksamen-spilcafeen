@@ -833,8 +833,31 @@ header {
 /* =====================
    SPIN HJUL OG QUIZ
    ===================== */
+/* spin-quiz-wrapper = både spinhjulet og quiz i EN wrapper (ydre wrapper)*/
+/* spin container = hele boksen på forsiden med hjul*/
+/* quiz container = hele boksen på forsiden med quiz*/
+/* spin-inner-wrapper = indholdet i spin containeren (hjul)*/
+/* quiz-inner-wrapper = indholdet i quiz containeren (quiz) */
+/* spin-dialog = spin containeren (pop-up) */
+/* quiz-dialog = quiz containeren (pop-up) */
+/* spin-dialog-content = indholdet i spin containeren (pop-up) */
+/* quiz-dialog-content = indholdet i quiz containeren (pop-up) */
 
-/* Fælles styling for spin og quiz container */
+
+/* =====================
+   SPIN HJUL OG QUIZ
+   ===================== */
+
+/* SPIN-QUIZ WRAPPER LAYOUT: Spin & Quiz side by side */
+.spin-quiz-wrapper {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  align-items: stretch;
+  margin: 3rem 0;
+}
+
+/* Fælles styling for spin og quiz container (boksen til det) */
 .spin-container,
 .quiz-container {
   background: var(--bg-card);
@@ -844,6 +867,10 @@ header {
   transition: var(--transition);
   cursor: pointer;
   position: relative;
+  flex: 1;
+  max-width: 100%;
+  max-height: 400px;
+  width: 100%;
 }
 
 .spin-container:hover,
@@ -859,34 +886,18 @@ header {
   outline-offset: 2px;
 }
 
-
-
-/* Poster styling */
-.spin-poster,
-.quiz-poster {
-  flex: 1;
-  max-width: 400px;
-  height: 300px;
-  object-fit: contain;
-}
-
-.spin-container:hover .spin-poster,
-.quiz-container:hover .quiz-poster {
-  transform: scale(1.05);
-}
-
-/* Inner wrapper */
+/* INNER WRAPPER FOR SPIN OG QUIZ */
 .spin-inner-wrapper,
 .quiz-inner-wrapper {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 16px;
-  padding: 16px;
+  gap: 12px;
+  padding: 12px;
 }
 
-/* Tekst styling */
+/* Inner wrapper - Tekst styling */
 .spin-container-text h2,
 .quiz-container-text h2 {
   margin-bottom: 12px;
@@ -897,62 +908,31 @@ header {
   margin-bottom: 0;
 }
 
-/* Layout: Spin & Quiz side by side */
-.spin-quiz-wrapper {
-  display: flex;
-  gap: 2rem;
-  justify-content: center;
-  align-items: stretch;
-  margin: 3rem 0;
-}
-
-.spin-container,
-.quiz-container {
+/* Inner wrapper - Poster styling */
+.spin-poster,
+.quiz-poster {
   flex: 1;
-  max-width: 450px;
-  max-height: 400px;
+  max-width: 400px;
+  height: 300px;
+  object-fit: contain;
 }
 
-/* Spin & Quiz dialog styling */
+/* Spin & Quiz dialog styling (indhold i pop-up) */
 dialog#spin-dialog,
 dialog#quiz-dialog {
   border: none;
-  border-radius: var(--radius);
+  border-radius: 0.75rem;
   box-shadow: var(--shadow-lg);
-  padding: 0;
-  max-width: min(200px, 600px);
-  max-height: 600px;
+  padding: 1rem;
+  max-width: 600px;
+  max-height: calc(100vh - 2rem);
+  min-height: 80px;
   background: var(--bg-card);
   color: var(--text);
   overflow: hidden;
   position: fixed;
-  margin: auto;
+  margin: 3rem auto;
   width: min(95vw, 600px);
-}
-
-
-#spin-button,
-#quiz-button,
-#spin-restart,
-#quiz-restart,
-#spin-open-game,
-#quiz-open-game {
-  width: 100%;
-  max-width: 300px;  /* Begrænser knappernes bredde */
-  margin: 0.5rem auto;
-  display: block;
-}
-
-.spin-result-image {
-  max-width: 400px;
-}
-
-.quiz-result-image {
-  max-width: 400px;   
-  width: 100%;        
-  height: auto;       
-  display: block;     
-  margin: 0 auto;
 }
 
 dialog#spin-dialog::backdrop,
@@ -963,31 +943,109 @@ dialog#quiz-dialog::backdrop {
 
 #spin-dialog-content,
 #quiz-dialog-content {
-  padding: 2rem;
   display: grid;
   grid-template-columns: 1fr;
-  gap: 2rem;
+  gap: 1rem;
   align-items: start;
   overflow-y: auto;
   max-height: 90vh;
   text-align: center;
+  padding: 1rem;
 }
 
-/* Start/Spin & Quiz buttons */
+/* ========================================
+   SPIN & QUIZ dialog posters - responsive
+   ======================================== */
+dialog#spin-dialog .spin-poster,
+dialog#quiz-dialog .quiz-poster {
+  width: 100%;
+  max-width: 600px;
+  height: auto;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  dialog#spin-dialog .spin-poster,
+  dialog#quiz-dialog .quiz-poster {
+    max-width: 90%;
+    width: 100%;
+  }
+
+  .spin-inner-wrapper,
+  .quiz-inner-wrapper {
+    padding: 8px;
+    gap: 16px;
+  }
+}
+
+/* ============================
+   SPIN HJUL OG QUIZ - Knapper
+   ============================ */
+
+/* Fælles styling for alle spin/quiz knapper */
 #spin-button,
-#quiz-button {
+#quiz-button,
+#spin-restart,
+#quiz-restart,
+#spin-open-game,
+#quiz-open-game {
+  width: 100%;
+  max-width: 300px;
+  display: block;
+  margin: 0.5rem auto;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: var(--transition);
+  font-size: 1.25rem;
+  padding: 1rem 2rem;
+}
+
+/* Røde knapper */
+#spin-button,
+#quiz-button,
+#spin-open-game,
+#quiz-open-game {
   background: var(--primary);
   color: white;
   border: none;
-  border-radius: var(--radius);
-  padding: 1rem 2rem;
-  font-size: 1.25rem;
-  cursor: pointer;
-  transition: var(--transition);
-  width: 100%;
+  margin-top: 1rem;
 }
 
-/* Quiz option buttons styling */
+/* Hvide knapper m. rød kant (Spin igen" / "Tag quiz igen) */
+#spin-restart,
+#quiz-restart {
+  background: var(--primary-light);
+  color: rgb(0,0,0);
+  border: 2px solid var(--primary);
+  margin-top: 1rem;
+}
+
+#spin-button:hover,
+#quiz-button:hover,
+#spin-restart:hover,
+#quiz-restart:hover,
+#spin-open-game:hover,
+#quiz-open-game:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+#spin-button:active,
+#quiz-button:active,
+#spin-restart:active,
+#quiz-restart:active,
+#spin-open-game:active,
+#quiz-open-game:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow);
+}
+
+/* =====================
+   KUN QUIZ STYLING
+   ===================== */
 .quiz-answer {
   background: var(--primary);
   color: white;
@@ -1011,121 +1069,22 @@ dialog#quiz-dialog::backdrop {
   box-shadow: var(--shadow);
 }
 
-/* Responsive: make quiz dialog and content work well on small screens */ 
-@media (max-width: 600px) {
-  .quiz-poster {
-    /* This block is now overridden by the new dialog poster rules below */
-  }
-}
-
-/* Styling til knap i spin og quiz "Spin igen" og "Tag quiz igen"*/ 
-#quiz-restart, #spin-restart {
-  background: var(--primary-light);
-  color: rgb(0, 0, 0);
-  border: 2px solid var(--primary);
-  border-radius: var(--radius);
-  padding: 1rem 2rem;
-  font-size: 1.25rem;
-  cursor: pointer;
-  transition: var(--transition);
+.quiz-result-image {
+  max-width: 400px;
   width: 100%;
-  margin-top: 1rem;
-}
-
-#quiz-restart, #spin-restart:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
-}
-
-#quiz-restart:active, #spin-restart:active {
-  transform: translateY(0);
-  box-shadow: var(--shadow);
-}
-
-/* Styling til knap i spin og quiz "Gå til spil"*/ 
-#quiz-open-game, #spin-open-game {
-  background: var(--primary);
-  color: white;
-  border: none;
-  border-radius: var(--radius);
-  padding: 1rem 2rem;
-  font-size: 1.25rem;
-  cursor: pointer;
-  transition: var(--transition);
-  width: 100%;
-  margin-top: 1rem;
-}
-
-#quiz-open-game, #spin-open-game:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
-}
-
-#quiz-open-game:active, #spin-open-game:active {
-  transform: translateY(0);
-  box-shadow: var(--shadow);
-}
-
-.spin-container,
-.quiz-container {
-  max-width: 100%;
-  width: 100%;
-}
-
-.spin-inner-wrapper,
-.quiz-inner-wrapper {
-  flex-direction: column;
-  align-items: center;
-  padding: 12px;
-  gap: 12px;
-  
-}
-
-
-/* SPIN & QUIZ dialog posters - responsive and container-bound */
-dialog#spin-dialog .spin-poster,
-dialog#quiz-dialog .quiz-poster {
-  width: 100%;
-  max-width: 600px;
   height: auto;
-  object-fit: contain;
   display: block;
   margin: 0 auto;
 }
 
-/* Mobile responsiveness */
-@media (max-width: 768px) {
-  dialog#spin-dialog .spin-poster,
-  dialog#quiz-dialog .quiz-poster {
-    max-width: 90%;
-    width: 100%;
-  }
+/* =====================
+   KUN SPIN STYLING
+   ===================== */
+.spin-result-image {
+  max-width: 400px;
 }
 
-dialog#spin-dialog,
-dialog#quiz-dialog {
-  max-width: 600px;
-  margin: 0.5rem auto;
-  max-height: calc(100vh - 2rem);
-  min-height: 80px;
-  border-radius: 0.75rem;
-  margin: 3rem auto;
-}
 
-#spin-dialog-content,
-#quiz-dialog-content {
-  padding: 1rem;
-  gap: 1rem;
-  grid-template-columns: 1fr;
-  text-align: center;
-}
-
-#spin-button,
-#quiz-button {
-  width: 100%;
-  font-size: 1rem;
-  padding: 0.75rem 1rem;
-}
 
 /* =====================
    GAME GRID & CARDS

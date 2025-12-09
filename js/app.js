@@ -471,7 +471,7 @@ function initSpinQuiz() {
   if (quizContainer) quizContainer.addEventListener("click", (e) => { e.preventDefault(); displayQuizContent(); });
 }
 
-/* ===== HELPER: ÅBEN MODAL ===== */
+/* ===== ÅBEN MODAL ===== */
 function openModal(selector) {
   const modal = document.querySelector(selector);
   modal.showModal();
@@ -480,7 +480,7 @@ function openModal(selector) {
   modal.addEventListener("close", () => document.body.classList.remove("modal-open"), { once: true });
 }
 
-/* ===== HELPER: ÅBEN SPIL MODAL FRA SPIN/QUIZ ===== */
+/* ===== ÅBEN SPIL MODAL FRA SPIN/QUIZ ===== */
 function openGameModal(game) {
   if (!game) return;
   const gameDialog = document.getElementById(`${game.title.toLowerCase().replace(/ /g,'-')}-dialog`);
