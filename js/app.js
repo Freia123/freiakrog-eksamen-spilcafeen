@@ -11,7 +11,11 @@ console.log = function (...args) {
 // Starter app når DOM er loaded
 document.addEventListener("DOMContentLoaded", initApp);
 
-// ===== GLOBALE VARIABLER =====
+/* ==================
+   GLOBALE VARIABLER 
+   ================== */
+// === Opretter en tom liste, som senere fyldes med alle spil fra JSON.
+// Gør variablen global, så alle funktioner i filen kan tilgå og manipulere den.===
 let allGames = [];
 
 // ===== INITIALISERING =====
@@ -19,7 +23,9 @@ function initApp() {
   console.log("initApp: app.js is running 🎉");
   getGames(); // Hent alle games fra JSON og start applikationen
 
-  // ===== HEADER SØGNING OG FILTRERING =====
+  /* ==============================
+   HEADER SØGNING OG FILTRERING
+   ================================ */
   // Søgefelt i header - filtrer på spilnavn når brugeren skriver
   document
     .querySelector("#header-search-input")
@@ -38,155 +44,142 @@ function initApp() {
     .querySelector("#header-sort-select")
     .addEventListener("change", filterGames);
 
-  // ===== MAIN SORTERING =====
-  // Sort dropdown ved siden af "Alle spil" overskriften - alternativ til header sort
+  /* ==================================
+  "SORTER EFTER" SORTERING (MAIN SORT)
+  ===================================== */
+  // Dropdown ved siden af "Alle spil" overskriften - alternativ til header sorteringen
   document
     .querySelector("#main-sort-select")
     .addEventListener("change", filterGames);
 
-  // ===== SPILLETID RANGE FILTRERING =====
+  // ====== DYNAMISK OPBYGNING AF DROPDOWNS (GENRE & LOKATION) ======
+  // Dropdowns bygges dynamisk EFTER JSON-data er hentet i getGames()
+  // Se getGames() for kald til populateGenreDropdown() og LocationDropdown()
+
+  // ===== FILTRERING & MODAL KONTROL INITIALISERING =====
+  initPlaytimeFilters();
+  initRatingFilters();
+  initOtherFilters();
+  initModalControls();
+  initSpinQuiz();
+}
+
+// === Spilletid range filter ===
+function initPlaytimeFilters() {
   // "Fra" spilletid felt - auto-udfyldning af "til" felt
   document
     .querySelector("#header-playtime-from")
     .addEventListener("input", function () {
-      const fromValue = this.value; // Hent den indtastede "fra" værdi
-      const toField = document.querySelector("#header-playtime-to"); // Find "til" feltet
-
-      // AUTOMATISK BEREGNING: Hver gang "Fra" ændres, sæt "Til" til +15 minutter
-      // Eksempel: Fra=30 → Til=45, Fra=60 → Til=75
+      const fromValue = this.value;
+      const toField = document.querySelector("#header-playtime-to");
       if (fromValue) {
-        toField.value = parseInt(fromValue) + 15; // Konverterer til tal og læg 15 til
+        toField.value = parseInt(fromValue) + 15;
       } else {
-        // Hvis "Fra" ryddes (tomt), ryd også "Til" for at nulstille filteret
         toField.value = "";
       }
-
-      filterGames(); // Kører ny filtrering med opdaterede værdier
+      filterGames();
     });
-
   // "Til" spilletid felt - manuel justering af spilletid range
   document
     .querySelector("#header-playtime-to")
     .addEventListener("input", filterGames);
+}
 
-  // ===== RATING FELTER - AVANCERET SYNKRONISERING =====
-  // Rating "Fra" felt - tillader bruger fleksibilitet men sikrer logiske værdier
+// === Rating range filter med avanceret synkronisering ===
+function initRatingFilters() {
+  // Rating "Fra" felt
   document
     .querySelector("#header-rating-from")
     .addEventListener("input", function () {
-      const fromValue = parseInt(this.value); // Konverter til tal (NaN(Not a number) hvis tomt)
+      const fromValue = parseInt(this.value);
       const toField = document.querySelector("#header-rating-to");
-      const toValue = parseInt(toField.value); // Hent nuværende "Til" værdi
-
-      // SCENARIE 1: Bruger ændrer "Fra" og "Til" bliver for lav
-      // Eksempel: Fra=2→5, Til=3 → Fra=5, Til=5 (auto-justering)
+      const toValue = parseInt(toField.value);
       if (fromValue && toValue && toValue < fromValue) {
-        toField.value = fromValue; // Løft "Til" til samme niveau som "Fra"
+        toField.value = fromValue;
         console.log(
           `📊 Rating auto-justering: Til løftet fra ${toValue} til ${fromValue}`
         );
-      }
-      // SCENARIE 2: Første gang "Fra" udfyldes (smart initialisering)
-      // Eksempel: Fra=tom→3, Til=tom → Fra=3, Til=4 (+1 for god range)
-      else if (fromValue && !toField.value) {
-        toField.value = Math.min(5, fromValue + 1); // +1 men aldrig over max 5
+      } else if (fromValue && !toField.value) {
+        toField.value = Math.min(5, fromValue + 1);
         console.log(
           `📊 Rating initialisering: Fra=${fromValue}, Til=${toField.value}`
         );
       }
-
-      filterGames(); // Kør filtrering med nye værdier
+      filterGames();
     });
-
-  // Rating "Til" felt - validerer at "Fra" ≤ "Til" reglen overholdes
+  // Rating "Til" felt
   document
     .querySelector("#header-rating-to")
     .addEventListener("input", function () {
-      const toValue = parseInt(this.value); // Konverter til tal (NaN(Not a number) hvis tomt)
+      const toValue = parseInt(this.value);
       const fromField = document.querySelector("#header-rating-from");
-      const fromValue = parseInt(fromField.value); // Hent nuværende "Fra" værdi
-
-      // SCENARIE 1: Bruger sætter "Til" lavere end "Fra" (ulovligt)
-      // Eksempel: Fra=4, Til=5→2 → Fra=2, Til=2 (auto-justering)
+      const fromValue = parseInt(fromField.value);
       if (toValue && fromValue && toValue < fromValue) {
-        fromField.value = toValue; // Sænk "Fra" til samme niveau som "Til"
+        fromField.value = toValue;
         console.log(
           `📊 Rating validering: Fra sænket fra ${fromValue} til ${toValue}`
         );
-      }
-      // SCENARIE 2: Første gang "Til" udfyldes (smart initialisering)
-      // Eksempel: Fra=tom, Til=tom→4 → Fra=2, Til=4 (2-punkts range)
-      else if (toValue && !fromField.value) {
-        fromField.value = Math.max(0, toValue - 2); // -2 for god range, men aldrig under 0
+      } else if (toValue && !fromField.value) {
+        fromField.value = Math.max(0, toValue - 2);
         console.log(
           `📊 Rating initialisering: Fra=${fromField.value}, Til=${toValue}`
         );
       }
-
-      filterGames(); // Kør filtrering med nye værdier
+      filterGames();
     });
+}
 
+// === Øvrige filterfelter ===
+function initOtherFilters() {
   // Spillere felt
   document
     .querySelector("#header-players-from")
     .addEventListener("input", filterGames);
-
   // Sværhedsgrad felt
   document
     .querySelector("#header-difficulty-select")
     .addEventListener("change", filterGames);
-
   // Min. Alder felt
   document
     .querySelector("#header-age-from")
     .addEventListener("input", filterGames);
-
-  // Location dropdown (nu udenfor filter panel)
+  // Location dropdown
   document
     .querySelector("#location-select")
     .addEventListener("change", filterGames);
-
   // Clear filters knap
   document
     .querySelector("#header-clear-filters")
     .addEventListener("click", clearAllFilters);
+}
 
-  // Close dialog button
+
+
+/* ===========================================
+   MODAL- OG KONTROLELEMENTER (MODAL/FILTER/SØG)
+   =========================================== */
+
+// === Modal Kontrol: Åbning og lukning af game-modal ===
+function initModalControls() {
+  // --- Luk game modal når "close" knap trykkes ---
   document.querySelector("#close-dialog").addEventListener("click", () => {
     document.querySelector("#game-dialog").close();
     document.body.classList.remove("modal-open");
   });
-
-  // Filter panel toggle functionality
+  // --- Initialiser filterpanel kontrol (sidepanel) ---
   initFilterPanel();
-
-  // Attach spin/quiz triggers here (DOM guaranteed)
-  const spinContainer = document.querySelector(".spin-container");
-  if (spinContainer) {
-    spinContainer.addEventListener("click", (e) => {
-      e.preventDefault();
-      displaySpinContent();
-    });
-  }
-
-  const quizContainer = document.querySelector(".quiz-container");
-  if (quizContainer) {
-    quizContainer.addEventListener("click", (e) => {
-      e.preventDefault();
-      displayQuizContent();
-    });
-  }
 }
 
-// Init søge-ikon toggle funktionalitet
+// === Søgefelt Toggle (Søgeikonet i headeren) ===
 function initSearchToggle() {
+  // --- DOM referencer ---
   const searchToggle = document.querySelector("#search-toggle");
   const searchWrapper = document.querySelector("#header-search-wrapper");
   const searchInput = document.querySelector("#header-search-input");
 
   if (!searchToggle || !searchWrapper || !searchInput) return;
 
-  // Åbn / luk ved klik
+  // --- Åbn/luk søgefelt ved klik på ikon ---
   searchToggle.addEventListener("click", (e) => {
     e.stopPropagation();
     const isOpen = searchWrapper.classList.contains("open");
@@ -197,45 +190,45 @@ function initSearchToggle() {
     }
   });
 
-  // Luk når der klikkes udenfor
+  // --- Luk søgefelt når der klikkes udenfor ---
   document.addEventListener("click", (e) => {
     if (!searchWrapper.contains(e.target) && !searchToggle.contains(e.target)) {
       closeSearch();
     }
   });
 
-  // Luk ved Escape
+  // --- Luk søgefelt med Escape ---
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
       closeSearch();
     }
   });
 
+  // --- Underfunktion: Åbn søgefelt og fokusér input ---
   function openSearch() {
     searchWrapper.classList.add("open");
     searchWrapper.setAttribute("aria-hidden", "false");
-    // Fokusér input efter animation frame
     requestAnimationFrame(() => searchInput.focus());
   }
-
+  // --- Underfunktion: Luk søgefelt ---
   function closeSearch() {
     searchWrapper.classList.remove("open");
     searchWrapper.setAttribute("aria-hidden", "true");
   }
 }
 
-// Filter panel functionality
+// === Filterpanel (sidepanel) kontrol ===
 function initFilterPanel() {
+  // --- DOM referencer ---
   const filterToggle = document.querySelector("#filter-toggle");
   const filterPanel = document.querySelector("#filter-panel");
   const filterClose = document.querySelector("#filter-close");
   const filterBadge = document.querySelector("#filter-badge");
 
-  // Toggle filter panel
+  // --- Åbn/luk filterpanel ved klik på "Filter" knap ---
   filterToggle.addEventListener("click", (e) => {
     e.stopPropagation();
     const isOpen = filterPanel.classList.contains("open");
-
     if (isOpen) {
       closeFilterPanel();
     } else {
@@ -243,72 +236,58 @@ function initFilterPanel() {
     }
   });
 
-  // Close filter panel
+  // --- Luk filterpanel ved klik på "X" eller udenfor panel ---
   filterClose.addEventListener("click", closeFilterPanel);
-
-  // Close when clicking outside
   document.addEventListener("click", (e) => {
     if (!filterPanel.contains(e.target) && !filterToggle.contains(e.target)) {
       closeFilterPanel();
     }
   });
-
-  // Prevent panel close when clicking inside
+  // Forhindrer at klik inde i panelet lukker det
   filterPanel.addEventListener("click", (e) => {
     e.stopPropagation();
   });
 
+  // --- Underfunktion: Åbn/luk panel (tilføj/fjern klasser) ---
   function openFilterPanel() {
     filterPanel.classList.add("open");
     filterToggle.classList.add("active");
   }
-
   function closeFilterPanel() {
     filterPanel.classList.remove("open");
     filterToggle.classList.remove("active");
   }
 
-  // Update filter badge count
+  // --- Underfunktion: Opdater filter badge (antal aktive filtre) ---
   function updateFilterBadge() {
     let activeFilters = 0;
-
-    // Check search
-    if (document.querySelector("#header-search-input").value.trim())
-      activeFilters++;
-
-    // Check dropdowns
-    if (document.querySelector("#location-select").value !== "all")
-      activeFilters++;
-    if (document.querySelector("#header-genre-select").value !== "none")
-      activeFilters++;
-    if (document.querySelector("#header-sort-select").value !== "all")
-      activeFilters++;
-    if (document.querySelector("#main-sort-select").value !== "all")
-      activeFilters++;
-    if (document.querySelector("#header-difficulty-select").value !== "none")
-      activeFilters++;
-
-    // Check number inputs - men spilletid tæller kun som én filtrering
-    // Spilletid (tæller kun som ét filter hvis mindst et af felterne er udfyldt)
+    // Søgning
+    if (document.querySelector("#header-search-input").value.trim()) activeFilters++;
+    // Dropdowns
+    if (document.querySelector("#location-select").value !== "all") activeFilters++;
+    if (document.querySelector("#header-genre-select").value !== "none") activeFilters++;
+    if (document.querySelector("#header-sort-select").value !== "all") activeFilters++;
+    if (document.querySelector("#main-sort-select").value !== "all") activeFilters++;
+    if (document.querySelector("#header-difficulty-select").value !== "none") activeFilters++;
+    // Spilletid (range) - tæller kun som ét filter hvis udfyldt
     if (
       document.querySelector("#header-playtime-from").value ||
       document.querySelector("#header-playtime-to").value
     ) {
       activeFilters++;
     }
-
-    // Rating (tæller kun som ét filter hvis mindst et af felterne er udfyldt)
+    // Rating (range) - tæller kun som ét filter hvis udfyldt
     if (
       document.querySelector("#header-rating-from").value ||
       document.querySelector("#header-rating-to").value
     ) {
       activeFilters++;
     }
-
-    // Øvrige enkelt-felter
+    // Øvrige enkeltfelter
     if (document.querySelector("#header-players-from").value) activeFilters++;
     if (document.querySelector("#header-age-from").value) activeFilters++;
 
+    // --- Vis/skjul badge og sæt tal ---
     if (activeFilters > 0) {
       filterBadge.style.display = "flex";
       filterBadge.textContent = activeFilters;
@@ -317,7 +296,7 @@ function initFilterPanel() {
     }
   }
 
-  // Add event listeners to all filter inputs to update badge
+  // --- Lyt på alle filter-inputs og opdater badge ved ændring ---
   const filterInputs = [
     "#header-genre-select",
     "#header-sort-select",
@@ -330,7 +309,6 @@ function initFilterPanel() {
     "#header-difficulty-select",
     "#header-age-from",
   ];
-
   filterInputs.forEach((selector) => {
     const element = document.querySelector(selector);
     if (element) {
@@ -339,96 +317,87 @@ function initFilterPanel() {
     }
   });
 
-  // Expose updateFilterBadge globally so clearAllFilters can use it
+  // --- Gør updateFilterBadge global, så clearAllFilters kan bruge den ---
   window.updateFilterBadge = updateFilterBadge;
 }
 
-// Note: spin/quiz triggers are attached inside initApp to guarantee
-// the DOM is ready and to avoid duplicate listeners when the file is
-// reloaded during development.
 
-// displaySpinContent funktion
+/* =====================
+   SPIN OG QUIZ SEKTION
+   ===================== */
+
+/* =============
+   SPIN HJUL
+   ============= */
 function displaySpinContent() {
   const spinDialogContent = document.querySelector("#spin-dialog-content");
+  renderSpinFrontPage(spinDialogContent);
+  openModal("#spin-dialog");
 
-  // FØRSTE SKÆRM - SPIN HJUL
-  spinDialogContent.innerHTML = `
+  const spinButton = document.querySelector("#spin-button");
+  spinButton.addEventListener("click", () => spinWheel(spinDialogContent));
+}
+
+// Render forsiden af spin-hjulet
+function renderSpinFrontPage(container) {
+  container.innerHTML = `
     <article class="spin-content">
-        <h2>Kan du ikke vælge spil?</h2>
-        <img src="images/spin-hjul-billede.png" alt="Spin billede" class="spin-poster" id="spin-wheel">
-        <p>Lad tilfældet bestemme og spin hjulet her!!</p>
-        <button id="spin-button">Spin hjulet!</button>
+      <h2>Kan du ikke vælge spil?</h2>
+      <img src="images/spin-hjul-billede.png" alt="Spin billede" class="spin-poster" id="spin-wheel">
+      <p>Lad tilfældet bestemme og spin hjulet her!!</p>
+      <button id="spin-button">Spin hjulet!</button>
+    </article>
+  `;
+}
+
+// Spin hjulet og vis resultat
+function spinWheel(spinDialogContent) {
+  const wheel = document.querySelector("#spin-wheel");
+  const spins = 5 + Math.floor(Math.random() * 5);
+  wheel.style.transition = "transform 1.5s ease-out";
+  wheel.offsetWidth; // force reflow
+  wheel.style.transform = `rotate(${spins * 360}deg)`;
+
+  // Tilfældig spil
+  if (!allGames || allGames.length === 0) return;
+  const randomIndex = Math.floor(Math.random() * allGames.length);
+  const game = allGames[randomIndex];
+  showSpinResult(game);
+}
+
+// Vis resultat af spin
+function showSpinResult(game) {
+  const spinDialogContent = document.querySelector("#spin-dialog-content");
+  spinDialogContent.innerHTML = `
+    <article class="spin-result">
+      <h2>Jeres spil er:</h2>
+      <p>Vi anbefaler: <strong>${game.title}</strong></p>
+      <img src="${game.image}" alt="${game.title}" class="spin-result-image">
+      <button id="spin-restart">Spin igen</button>
+      <button id="spin-open-game" data-game="${game.title.toLowerCase().replace(/ /g, "-")}">Gå til spil</button>
     </article>
   `;
 
-  const spinDialog = document.querySelector("#spin-dialog");
-  spinDialog.showModal();
-  document.body.classList.add("modal-open");
-
-  spinDialog.addEventListener(
-    "click",
-    (e) => {
-      if (e.target === spinDialog) spinDialog.close();
-    },
-    { once: true }
-  );
-  spinDialog.addEventListener(
-    "close",
-    () => document.body.classList.remove("modal-open"),
-    { once: true }
-  );
-
-  const spinButton = document.querySelector("#spin-button");
-  spinButton.addEventListener("click", () => {
-    console.log("Spin knap trykket!");
-
-    const wheel = document.querySelector("#spin-wheel");
-
-    // ===== ANIMATION =====
-    const spins = 5 + Math.floor(Math.random() * 5); // Tilfældig antal spins
-    wheel.style.transition = "transform 1.5s ease-out";
-    wheel.offsetWidth; // force reflow så browser registrerer ændringen
-    wheel.style.transform = `rotate(${spins * 360}deg)`;
-
-    // Vælg tilfældigt spil med det samme
-    if (!allGames || allGames.length === 0) return;
-    const randomIndex = Math.floor(Math.random() * allGames.length);
-    const game = allGames[randomIndex];
-
-    // Vis resultat næsten med det samme
-    spinDialogContent.innerHTML = `
-      <article class="spin-result">
-        <h2>Jeres spil er:</h2>
-        <p>Vi anbefaler: <strong>${game.title}</strong></p>
-        <img src="${game.image}" alt="${game.title}" class="spin-result-image">
-        <button id="spin-restart">Spin igen</button>
-        <button id="spin-open-game" data-game="${game.title
-          .toLowerCase()
-          .replace(/ /g, "-")}">Gå til spil</button>
-      </article>
-    `;
-
-    // Spin igen
-    const restartBtn = document.querySelector("#spin-restart");
-    restartBtn.addEventListener("click", () => displaySpinContent());
-
-    // Gå til spil
-    const goToGameBtn = document.querySelector("#spin-open-game");
-    goToGameBtn.addEventListener("click", () => {
-      spinDialog.close();
-      const gameId = goToGameBtn.dataset.game;
-      const gameDialog = document.getElementById(`${gameId}-dialog`);
-      if (gameDialog) gameDialog.showModal();
-    });
-  });
+  // Event listeners
+  document.querySelector("#spin-restart").addEventListener("click", displaySpinContent);
+  document.querySelector("#spin-open-game").addEventListener("click", () => openGameModal(game));
 }
 
-// displayQuizContent funktion
+/* =============
+   QUIZ
+   ============= */
 function displayQuizContent() {
   const quizDialogContent = document.querySelector("#quiz-dialog-content");
+  renderQuizFrontPage(quizDialogContent);
+  openModal("#quiz-dialog");
 
-  // ---- FØRSTE SIDE QUIZ/ FORSIDE ----
-  quizDialogContent.innerHTML = `
+  const startBtn = document.querySelector("#quiz-button");
+  startBtn.addEventListener("click", () => showQuestion(0));
+}
+
+// Render forsiden af quiz
+function renderQuizFrontPage(container) {
+  container.innerHTML = `
     <article class="quiz-frontpage">
       <h2>Kan du ikke vælge spil?</h2>
       <img src="images/quiz-billede.png" alt="Quiz billede" class="quiz-poster">
@@ -436,110 +405,89 @@ function displayQuizContent() {
       <button id="quiz-button">Tag quiz</button>
     </article>
   `;
-
-  // Quiz spørgsmål data
-  const questions = [
-    {
-      question: "Hvilket af disse spil tiltaler jer mest?",
-      options: ["Skak", "Det Dårlige Selskab", "UNO", "Partners"]
-    },
-    {
-      question: "Hvilket tema tiltaler jer mest?",
-      options: ["Historie og kultur", "Fantasy og sci-fi", "Hverdagskomik og party", "Mystik og gåder"]
-    },
-    {
-      question: "Hvor kreativt skal spillet være?",
-      options: ["Ingen kreativitet, bare logik og regler", "Lidt kreativt input", "Masser af kreativitet og fantasi"]
-    },
-    {
-      question: "Vil I grine eller koncentrere jer?",
-      options: ["Grin og sjov", "Blandet", "Fuld fokus"]
-    },
-    {
-      question: "Vil I have held eller strategi?",
-      options: ["Ren held", "Blanding af held og strategi", "Kun strategi"]
-    },
-    {
-      question: "Vil I have et hurtigt eller langt spil?",
-      options: ["Hurtigt, let at lære", "Medium spil, lidt dybere strategi", "Længere spil"]
-    }
-  ];
-
-  let currentQuestion = 0;
-  let userAnswers = [];
-
-  // ---- Knap til at starte quiz ----
-  const startBtn = document.getElementById("quiz-button");
-  startBtn.addEventListener("click", () => {
-    showQuestion(0);
-  });
-
-  function showQuestion(index) {
-    const q = questions[index];
-    quizDialogContent.innerHTML = `
-      <h2>Spørgsmål ${index + 1}</h2>
-      <p>${q.question}</p>
-      ${q.options.map(opt => `<button class="quiz-answer" data-answer="${opt}">${opt}</button>`).join("")}
-    `;
-    quizDialogContent.querySelectorAll(".quiz-answer").forEach(btn => {
-      btn.addEventListener("click", (e) => {
-        userAnswers.push(e.target.dataset.answer);
-        currentQuestion++;
-        if (currentQuestion < questions.length) {
-          showQuestion(currentQuestion);
-        } else {
-          showResult();
-        }
-      });
-    });
-  }
-
-  function showResult() {
-    const resultName = userAnswers[0];
-
-    const gameImages = {
-      "Skak": "images/quiz-svar-skak.webp",
-      "Partners": "images/quiz-svar-partners.webp",
-      "UNO": "images/quiz-svar-uno.webp",
-      "Det Dårlige Selskab": "images/quiz-svar-det-daarlige-selskab.webp"
-    };
-    const resultImage = gameImages[resultName] || "images/quiz-billede.png";
-
-    quizDialogContent.innerHTML = `
-      <h2>JERES SPIL ER:</h2>
-      <p>Vi anbefaler spillet baseret på dine svar: <strong>${resultName}</strong></p>
-      <img src="${resultImage}" alt="${resultName}" class="quiz-result-image">
-      <button id='quiz-restart'>Tag quiz igen</button>
-      <button id='quiz-open-game' data-game="${resultName.toLowerCase().replace(/ /g,'-')}">Gå til spil</button>
-    `;
-
-    // Restart knap
-    const restartBtn = document.querySelector("#quiz-restart");
-    restartBtn.addEventListener("click", () => displayQuizContent());
-
-    // Gå til spil knap
-    const goToGameBtn = document.querySelector("#quiz-open-game");
-    goToGameBtn.addEventListener("click", () => {
-      const quizDialog = document.querySelector("#quiz-dialog");
-      quizDialog.close();
-      const gameId = goToGameBtn.dataset.game;
-      const gameDialog = document.getElementById(`${gameId}-dialog`);
-      if (gameDialog) gameDialog.showModal();
-    });
-  }
-
-  // Åbn dialog hvis ikke allerede åben
-  const quizDialog = document.querySelector("#quiz-dialog");
-  quizDialog.showModal();
-  document.body.classList.add("modal-open");
-
-  quizDialog.addEventListener("click", (e) => {
-    if (e.target === quizDialog) quizDialog.close();
-  });
-  quizDialog.addEventListener("close", () =>
-    document.body.classList.remove("modal-open")
-  );
 }
+
+// Quiz data
+const quizQuestions = [
+  { question: "Hvilket af disse spil tiltaler jer mest?", options: ["Skak", "Det Dårlige Selskab", "UNO", "Partners"] },
+  { question: "Hvilket tema tiltaler jer mest?", options: ["Historie og kultur", "Fantasy og sci-fi", "Hverdagskomik og party", "Mystik og gåder"] },
+  { question: "Hvor kreativt skal spillet være?", options: ["Ingen kreativitet, bare logik og regler", "Lidt kreativt input", "Masser af kreativitet og fantasi"] },
+  { question: "Vil I grine eller koncentrere jer?", options: ["Grin og sjov", "Blandet", "Fuld fokus"] },
+  { question: "Vil I have held eller strategi?", options: ["Ren held", "Blanding af held og strategi", "Kun strategi"] },
+  { question: "Vil I have et hurtigt eller langt spil?", options: ["Hurtigt, let at lære", "Medium spil, lidt dybere strategi", "Længere spil"] }
+];
+
+let quizCurrentQuestion = 0;
+let quizUserAnswers = [];
+
+function showQuestion(index) {
+  const quizDialogContent = document.querySelector("#quiz-dialog-content");
+  const q = quizQuestions[index];
+  quizDialogContent.innerHTML = `
+    <h2>Spørgsmål ${index + 1}</h2>
+    <p>${q.question}</p>
+    ${q.options.map(opt => `<button class="quiz-answer" data-answer="${opt}">${opt}</button>`).join("")}
+  `;
+  quizDialogContent.querySelectorAll(".quiz-answer").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      quizUserAnswers.push(e.target.dataset.answer);
+      quizCurrentQuestion++;
+      if (quizCurrentQuestion < quizQuestions.length) showQuestion(quizCurrentQuestion);
+      else showQuizResult(quizUserAnswers[0]);
+    });
+  });
+}
+
+function showQuizResult(resultName) {
+  const quizDialogContent = document.querySelector("#quiz-dialog-content");
+  const gameImages = {
+    "Skak": "images/quiz-svar-skak.webp",
+    "Partners": "images/quiz-svar-partners.webp",
+    "UNO": "images/quiz-svar-uno.webp",
+    "Det Dårlige Selskab": "images/quiz-svar-det-daarlige-selskab.webp"
+  };
+  const resultImage = gameImages[resultName] || "images/quiz-billede.png";
+
+  quizDialogContent.innerHTML = `
+    <h2>JERES SPIL ER:</h2>
+    <p>Vi anbefaler spillet baseret på dine svar: <strong>${resultName}</strong></p>
+    <img src="${resultImage}" alt="${resultName}" class="quiz-result-image">
+    <button id='quiz-restart'>Tag quiz igen</button>
+    <button id='quiz-open-game' data-game="${resultName.toLowerCase().replace(/ /g,'-')}">Gå til spil</button>
+  `;
+
+  document.querySelector("#quiz-restart").addEventListener("click", displayQuizContent);
+  document.querySelector("#quiz-open-game").addEventListener("click", () => {
+    const game = allGames.find(g => g.title === resultName);
+    openGameModal(game);
+  });
+}
+
+/* ===== SPIN/QUIZ TRIGGERS ===== */
+function initSpinQuiz() {
+  const spinContainer = document.querySelector(".spin-container");
+  if (spinContainer) spinContainer.addEventListener("click", (e) => { e.preventDefault(); displaySpinContent(); });
+  const quizContainer = document.querySelector(".quiz-container");
+  if (quizContainer) quizContainer.addEventListener("click", (e) => { e.preventDefault(); displayQuizContent(); });
+}
+
+/* ===== HELPER: ÅBEN MODAL ===== */
+function openModal(selector) {
+  const modal = document.querySelector(selector);
+  modal.showModal();
+  document.body.classList.add("modal-open");
+  modal.addEventListener("click", e => { if (e.target === modal) modal.close(); }, { once: true });
+  modal.addEventListener("close", () => document.body.classList.remove("modal-open"), { once: true });
+}
+
+/* ===== HELPER: ÅBEN SPIL MODAL FRA SPIN/QUIZ ===== */
+function openGameModal(game) {
+  if (!game) return;
+  const gameDialog = document.getElementById(`${game.title.toLowerCase().replace(/ /g,'-')}-dialog`);
+  if (gameDialog) gameDialog.showModal();
+}
+
+
 
 // ===== DATA HENTNING =====
 async function getGames() {
@@ -553,14 +501,19 @@ async function getGames() {
   );
   allGames = await response.json();
   console.log(`📊 JSON data modtaget: ${allGames.length} games`);
-  populateGenreDropdown(); // Udfyld dropdown med genres <-----
-  LocationDropdown(); // Udfyld dropdown med locations <-----
+  // === Byg dropdowns dynamisk EFTER JSON-data ===
+  populateGenreDropdown(); // Udfyld genre/kategori dropdown
+  LocationDropdown();      // Udfyld lokation dropdown
   displayGames(allGames);
   populateCarousel(); // Tilføj top-rated games til karrussel
   populateScrollCarousel(); // Tilføj nyere games til scroll-karrussel
   updateActiveFiltersDisplay(); // Initialiser aktive filtre display
 }
 
+
+/* =============
+   GAME CARDS
+   ============= */
 // ===== VISNING =====  // Vis alle games - loop gennem og kald displayGame() for hver game
 function displayGames(games) {
   console.log(` Viser ${games.length} games`);
@@ -610,12 +563,15 @@ function displayGame(game) {
     }
   });
 }
-// Husk: game.players er et OBJECT!
-// Er der andre properties, du skal tænke over?
 
-// ===== FILTRERING =====
+/* ==============================================
+   DROPDOWNS BASERET PÅ JSON-DATA (filtrering)
+   ============================================== */
 
-// Dropdownmenu med genre
+// ==========================
+// Dropdownmenu med genre/kategori
+// Bygges dynamisk EFTER JSON-data er hentet (kaldt i getGames())
+// ==========================
 function populateGenreDropdown() {
   const genreSelect = document.querySelector("#header-genre-select");
   const genres = new Set();
@@ -636,7 +592,10 @@ function populateGenreDropdown() {
   }
 }
 
-// Dropdownmenu med byer
+// ==========================
+// Dropdownmenu med lokation/by
+// Bygges dynamisk EFTER JSON-data er hentet (kaldt i getGames())
+// ==========================
 function LocationDropdown() {
   const locationSelect = document.querySelector("#location-select");
   const location = new Set();
@@ -1016,88 +975,497 @@ function clearAllFilters() {
   filterGames();
 }
 
-// ===== MODAL =====
+/* ============================
+   FILTRERING OG AKTIVE FILTRE
+   ============================ */
 
-// ===== FAVORIT SYSTEM =====
+/**
+ * Filtrerer listen af spil baseret på alle aktive filtre og sorteringer.
+ * Kaldes hver gang brugeren ændrer et filterfelt.
+ */
+function filterGames() {
+  // Filtrer games baseret på søgning, genre, playtime, ovs. // OBS: game.genre skal sammenlignes med === (ikke .includes())
 
-// Håndter favorit klik
-function toggleFavorite(event, gameTitle) {
-  event.stopPropagation(); // Forhindrer at game card også bliver klikket
-  const favoriteIcon = event.target;
+  // Search variable - header
+  const searchValue = document
+    .querySelector("#header-search-input")
+    .value.toLowerCase();
 
-  // Hent eksisterende favoritter fra localStorage
-  let favorites = getFavorites();
+  // Kategori (genre) variable
+  const genreValue = document.querySelector("#header-genre-select").value;
 
-  // Toggle favorit status baseret på billedets filnavn (mere robust med endsWith)
-  if (
-    favoriteIcon.src.endsWith("Favorit%20tomt%20ikon.png") ||
-    favoriteIcon.src.endsWith("favorit-tomt-ikon.png")
-  ) {
-    favoriteIcon.src = "images/favorit-fyldt-ikon.png";
-    // Tilføj til favoritter
-    if (!favorites.includes(gameTitle)) {
-      favorites.push(gameTitle);
-      saveFavorites(favorites);
-    }
-    console.log(`❤️ Tilføjet til favoritter: ${gameTitle}`);
-  } else if (
-    favoriteIcon.src.endsWith("Favorit%20fyldt%20ikon.png") ||
-    favoriteIcon.src.endsWith("favorit-fyldt-ikon.png")
-  ) {
-    favoriteIcon.src = "images/favorit-tomt-ikon.png";
-    // Fjern fra favoritter
-    favorites = favorites.filter((title) => title !== gameTitle);
-    saveFavorites(favorites);
-    console.log(`💔 Fjernet fra favoritter: ${gameTitle}`);
+  // Sorterings variable - tjek begge sort dropdowns
+  const headerSortValue = document.querySelector("#header-sort-select").value;
+  const mainSortValue = document.querySelector("#main-sort-select").value;
+  // Brug main sort som primær, fallback til header sort
+  const sortValue = mainSortValue !== "all" ? mainSortValue : headerSortValue;
+
+  // Location variable - fra header
+  const locationValue = document.querySelector("#location-select").value;
+
+  // Playtime variable - fra header
+  const playtimeFromInput = document.querySelector(
+    "#header-playtime-from"
+  ).value;
+  const playtimeToInput = document.querySelector("#header-playtime-to").value;
+
+  const playtimeFrom = Number(playtimeFromInput) || 0;
+  // Hvis kun "Fra" er udfyldt, sæt automatisk "Til" til +15 min
+  let playtimeTo;
+  if (playtimeFromInput && !playtimeToInput) {
+    playtimeTo = Number(playtimeFromInput) + 15;
+  } else {
+    playtimeTo = Number(playtimeToInput) || 9999;
   }
 
-  // Opdater alle ikoner for dette spil (både i grid og dialog)
-  updateFavoriteIcons(gameTitle, favorites.includes(gameTitle));
+  // Rating variable - fra header
+  const ratingFromInput = document.querySelector("#header-rating-from").value;
+  const ratingToInput = document.querySelector("#header-rating-to").value;
+  const ratingFrom = Number(ratingFromInput) || 0;
+  const ratingTo = Number(ratingToInput) || 5;
+
+  // Antal spillere variable - fra header
+  const playersFrom =
+    Number(document.querySelector("#header-players-from").value) || 0;
+
+  // Sværhedsgrad variable - fra header
+  const difficultyValue = document.querySelector(
+    "#header-difficulty-select"
+  ).value;
+
+  // Min alder variable - fra header
+  const ageFrom = Number(document.querySelector("#header-age-from").value) || 0;
+
+  console.log("🔄 Filtrerer games...");
+
+  // Start med alle games
+  let filteredGames = allGames;
+
+  // TRIN 1: Filtrer på søgetekst
+  if (searchValue) {
+    filteredGames = filteredGames.filter((game) => {
+      return game.title.toLowerCase().includes(searchValue);
+    });
+  }
+
+  // TRIN 2: Filter på kategori (genre) (fra dropdown)
+  if (genreValue !== "none") {
+    filteredGames = filteredGames.filter((game) => {
+      return game.genre.includes(genreValue);
+    });
+  }
+
+  // TRIN 3: Filter på location (fra dropdown)
+  if (locationValue !== "all") {
+    filteredGames = filteredGames.filter((game) => {
+      return game.location === locationValue;
+    });
+  }
+
+  // TRIN 4: Playtime filter
+  if (playtimeFrom > 0 || playtimeTo < 9999) {
+    filteredGames = filteredGames.filter((game) => {
+      // Antag at game.playtime er i minutter (f.eks. "30-60" eller "45")
+      const playtime = parseInt(game.playtime); // Tag første nummer
+      return playtime >= playtimeFrom && playtime <= playtimeTo;
+    });
+  }
+
+  // TRIN 5: Rating filter
+  if (ratingFromInput || ratingToInput) {
+    filteredGames = filteredGames.filter((game) => {
+      return game.rating >= ratingFrom && game.rating <= ratingTo;
+    });
+  }
+
+  // TRIN 6: Antal spillere filter
+  if (playersFrom > 0) {
+    filteredGames = filteredGames.filter((game) => {
+      // Tjek om den indtastede værdi ligger inden for spillets min-max spænd
+      return playersFrom >= game.players.min && playersFrom <= game.players.max;
+    });
+  }
+
+  // TRIN 7: Sværhedsgrad filter
+  if (difficultyValue !== "none") {
+    filteredGames = filteredGames.filter((game) => {
+      return game.difficulty === difficultyValue;
+    });
+  }
+
+  // TRIN 8: Min alder filter
+  if (ageFrom > 0) {
+    filteredGames = filteredGames.filter((game) => {
+      return game.age >= ageFrom;
+    });
+  }
+
+  // TRIN 9: Sortering
+  if (sortValue === "title") {
+    filteredGames.sort((a, b) => a.title.localeCompare(b.title)); // A-Å
+  } else if (sortValue === "title2") {
+    filteredGames.sort((a, b) => b.title.localeCompare(a.title)); // Å-A
+  } else if (sortValue === "rating") {
+    filteredGames.sort((a, b) => b.rating - a.rating);
+  }
+
+  console.log(`✅ Viser ${filteredGames.length} games`);
+  displayGames(filteredGames);
+  updateActiveFiltersDisplay(); // Opdater aktive filtre display
 }
 
-// Hent favoritter fra localStorage
+/**
+ * Opdaterer visningen af aktive filtre øverst på siden.
+ * Viser en række filter-tags, som kan fjernes enkeltvis.
+ */
+function updateActiveFiltersDisplay() {
+  const activeFilters = getActiveFilters();
+  const filtersSection = document.querySelector("#active-filters-section");
+  const filtersList = document.querySelector("#active-filters-list");
+
+  if (activeFilters.length === 0) {
+    filtersSection.style.display = "none";
+    return;
+  }
+
+  filtersSection.style.display = "block";
+  filtersList.innerHTML = "";
+
+  activeFilters.forEach((filter) => {
+    const filterTag = createFilterTag(filter);
+    filtersList.appendChild(filterTag);
+  });
+}
+
+/**
+ * Finder alle aktive filtre og returnerer dem som et array af objekter.
+ * Bruges til at vise filter-tags og til at tælle antal aktive filtre.
+ */
+function getActiveFilters() {
+  const filters = [];
+
+  // Søgning
+  const searchValue = document
+    .querySelector("#header-search-input")
+    .value.trim();
+  if (searchValue) {
+    filters.push({
+      type: "search",
+      label: `Søger: "${searchValue}"`,
+      value: searchValue,
+    });
+  }
+
+  // Kategori
+  const genreValue = document.querySelector("#header-genre-select").value;
+  if (genreValue !== "none") {
+    filters.push({
+      type: "genre",
+      label: `Kategori: ${genreValue}`,
+      value: genreValue,
+    });
+  }
+
+  // Location
+  const locationValue = document.querySelector("#location-select").value;
+  if (locationValue !== "all") {
+    filters.push({
+      type: "location",
+      label: `Lokation: ${locationValue}`,
+      value: locationValue,
+    });
+  }
+
+  // Sortering
+  const headerSortValue = document.querySelector("#header-sort-select").value;
+  const mainSortValue = document.querySelector("#main-sort-select").value;
+  const activeSortValue =
+    mainSortValue !== "all" ? mainSortValue : headerSortValue;
+
+  if (activeSortValue !== "all") {
+    const sortLabels = {
+      title: "Titel (A-Å)",
+      title2: "Titel (Å-A)",
+      rating: "Mest populære",
+    };
+    filters.push({
+      type: "sort",
+      label: `Sorteret: ${sortLabels[activeSortValue]}`,
+      value: activeSortValue,
+    });
+  }
+
+  // Spilletid
+  const playtimeFrom = document.querySelector("#header-playtime-from").value;
+  const playtimeTo = document.querySelector("#header-playtime-to").value;
+  if (playtimeFrom || playtimeTo) {
+    const fromText = playtimeFrom || "0";
+    // Hvis kun "Fra" er udfyldt, tilføj automatisk +15 min til "Til"
+    let toText;
+    if (playtimeFrom && !playtimeTo) {
+      toText = (parseInt(playtimeFrom) + 15).toString();
+    } else {
+      toText = playtimeTo || "∞";
+    }
+    filters.push({
+      type: "playtime",
+      label: `Spilletid: ${fromText}-${toText} min`,
+      value: { from: playtimeFrom, to: playtimeTo },
+    });
+  }
+
+  // Rating
+  const ratingFrom = document.querySelector("#header-rating-from").value;
+  const ratingTo = document.querySelector("#header-rating-to").value;
+  if (ratingFrom || ratingTo) {
+    const fromText = ratingFrom || "0";
+    const toText = ratingTo || "5";
+    filters.push({
+      type: "rating",
+      label: `Rating: ${fromText}-${toText}`,
+      value: { from: ratingFrom, to: ratingTo },
+    });
+  }
+
+  // Antal spillere
+  const playersFrom = document.querySelector("#header-players-from").value;
+  if (playersFrom) {
+    filters.push({
+      type: "players",
+      label: `Min. spillere: ${playersFrom}`,
+      value: playersFrom,
+    });
+  }
+
+  // Sværhedsgrad
+  const difficultyValue = document.querySelector(
+    "#header-difficulty-select"
+  ).value;
+  if (difficultyValue !== "none") {
+    filters.push({
+      type: "difficulty",
+      label: `Sværhedsgrad: ${difficultyValue}`,
+      value: difficultyValue,
+    });
+  }
+
+  // Min. alder
+  const ageFrom = document.querySelector("#header-age-from").value;
+  if (ageFrom) {
+    filters.push({
+      type: "age",
+      label: `Min. ${ageFrom} år`,
+      value: ageFrom,
+    });
+  }
+
+  return filters;
+}
+
+/**
+ * Opretter et filter-tag element (button) til visning af et aktivt filter.
+ * Når brugeren klikker på tagget, fjernes det pågældende filter.
+ */
+function createFilterTag(filter) {
+  const tag = document.createElement("button");
+  tag.className = "active-filter-tag";
+  tag.innerHTML = `${filter.label} <span class="filter-remove-icon">×</span>`;
+
+  tag.addEventListener("click", () => {
+    removeFilter(filter);
+  });
+
+  return tag;
+}
+
+/**
+ * Fjerner et specifikt filter, når brugeren klikker på et filter-tag.
+ * Nulstiller det relevante inputfelt og opdaterer filtreringen samt badge.
+ */
+function removeFilter(filter) {
+  switch (filter.type) {
+    case "search":
+      document.querySelector("#header-search-input").value = "";
+      break;
+    case "genre":
+      document.querySelector("#header-genre-select").value = "none";
+      break;
+    case "location":
+      document.querySelector("#location-select").value = "all";
+      break;
+    case "sort":
+      // Reset både header og main sort
+      document.querySelector("#header-sort-select").value = "all";
+      document.querySelector("#main-sort-select").value = "all";
+      break;
+    case "playtime":
+      document.querySelector("#header-playtime-from").value = "";
+      document.querySelector("#header-playtime-to").value = "";
+      break;
+    case "rating":
+      document.querySelector("#header-rating-from").value = "";
+      document.querySelector("#header-rating-to").value = "";
+      break;
+    case "players":
+      document.querySelector("#header-players-from").value = "";
+      break;
+    case "difficulty":
+      document.querySelector("#header-difficulty-select").value = "none";
+      break;
+    case "age":
+      document.querySelector("#header-age-from").value = "";
+      break;
+  }
+
+  // Opdaterer filter badge efter fjernelse ved filter knapperne
+  if (window.updateFilterBadge) {
+    window.updateFilterBadge();
+  }
+
+  // Kør filter igen for at opdatere listen
+  filterGames();
+}
+
+/**
+ * Fjerner alle aktive filtre og nulstiller alle felter.
+ * Viser derefter alle spil igen.
+ */
+function clearAllFilters() {
+  console.log("🗑️ Rydder alle filtre");
+
+  // Ryd søgning og dropdown felter - header version
+  document.querySelector("#header-search-input").value = "";
+  document.querySelector("#header-genre-select").value = "none";
+  document.querySelector("#location-select").value = "all";
+  document.querySelector("#header-sort-select").value = "all";
+  document.querySelector("#header-difficulty-select").value = "none";
+
+  // Ryd main sort dropdown
+  document.querySelector("#main-sort-select").value = "all";
+
+  // Ryd de nye range felter - header version
+  document.querySelector("#header-playtime-from").value = "";
+  document.querySelector("#header-playtime-to").value = "";
+  document.querySelector("#header-rating-from").value = "";
+  document.querySelector("#header-rating-to").value = "";
+  document.querySelector("#header-players-from").value = "";
+  document.querySelector("#header-age-from").value = "";
+
+  // Opdater filter badge
+  if (window.updateFilterBadge) {
+    window.updateFilterBadge();
+  }
+
+  // Kør filtrering igen (viser alle spil)
+  filterGames();
+}
+
+
+/* =========================================================================
+   MODAL & FAVORIT SYSTEM
+   - Indeholder modal-visning af spil og favorit-system (localStorage)
+   - Funktionaliteten er opdelt i overskuelige blokke og helpers
+   ========================================================================= */
+
+// ---------------------------
+// FAVORIT SYSTEM
+// ---------------------------
+
+/**
+ * Toggle favorit-ikon og status for et spil.
+ * Kaldes ved klik på favorit-ikonet.
+ */
+function toggleFavorite(event, gameTitle) {
+  event.stopPropagation(); // Forhindrer bubbling til card/modal baggrund
+  const favoriteIcon = event.target;
+  let favorites = getFavorites();
+  const isNowFavorite = isFavorite(gameTitle) ? false : true;
+
+  // Opdater localStorage og ikon
+  if (isNowFavorite) {
+    favorites.push(gameTitle);
+    saveFavorites(favorites);
+    favoriteIcon.src = "images/favorit-fyldt-ikon.png";
+    console.log(`❤️ Tilføjet til favoritter: ${gameTitle}`);
+  } else {
+    favorites = favorites.filter((title) => title !== gameTitle);
+    saveFavorites(favorites);
+    favoriteIcon.src = "images/favorit-tomt-ikon.png";
+    console.log(`💔 Fjernet fra favoritter: ${gameTitle}`);
+  }
+  // Opdater alle ikoner for dette spil (både i grid og modal)
+  updateFavoriteIcons(gameTitle, isNowFavorite);
+}
+
+/**
+ * Hent favorit-listen fra localStorage.
+ * @returns {Array} Array af spiltitler
+ */
 function getFavorites() {
   const favorites = localStorage.getItem("gamesFavorites");
   return favorites ? JSON.parse(favorites) : [];
 }
 
-// Gem favoritter i localStorage
+/**
+ * Gem favorit-listen i localStorage.
+ * @param {Array} favorites
+ */
 function saveFavorites(favorites) {
   localStorage.setItem("gamesFavorites", JSON.stringify(favorites));
 }
 
-// Opdater alle favorit-ikoner for et specifikt spil
+/**
+ * Opdater alle favorit-ikoner for et bestemt spil.
+ * @param {string} gameTitle
+ * @param {boolean} isFavorite
+ */
 function updateFavoriteIcons(gameTitle, isFavorite) {
   const iconSrc = isFavorite
     ? "images/favorit-fyldt-ikon.png"
     : "images/favorit-tomt-ikon.png";
-
-  // Find alle ikoner for dette spil (både i grid og dialog)
-  const allIcons = document.querySelectorAll(`img[onclick*="${gameTitle}"]`);
+  // Find alle ikoner der matcher dette spil (både i grid og modal)
+  const allIcons = document.querySelectorAll(`img.favorite-icon[onclick*="${gameTitle}"]`);
   allIcons.forEach((icon) => {
     icon.src = iconSrc;
   });
 }
 
-// Tjek om et spil er favorit
+/**
+ * Tjek om et spil er favorit.
+ * @param {string} gameTitle
+ * @returns {boolean}
+ */
 function isFavorite(gameTitle) {
   const favorites = getFavorites();
   return favorites.includes(gameTitle);
 }
 
-// Vis (alle) game detaljer i modal
-// Hvilke felter har et game? (Se JSON strukturen)
+// ---------------------------
+// MODAL VISNING AF SPIL
+// ---------------------------
 
+/**
+ * Vis detaljer om et spil i en modal dialog.
+ * @param {Object} game
+ */
 function showGameModal(game) {
   console.log("🎭 Åbner modal for:", game.title);
-
-  // Byg HTML struktur dynamisk
   const dialogContent = document.querySelector("#dialog-content");
+  dialogContent.innerHTML = buildGameModalHtml(game);
+  openGameDialog();
+  addGameModalEventListeners(game);
+}
+
+/**
+ * Byg HTML-strukturen til game-modal.
+ * @param {Object} game
+ * @returns {string}
+ */
+function buildGameModalHtml(game) {
   const favoriteIconSrc = isFavorite(game.title)
     ? "images/favorit-fyldt-ikon.png"
     : "images/favorit-tomt-ikon.png";
-
-  dialogContent.innerHTML = `
+  return `
    <div class="game-poster-container">
      <img src="${game.image}" alt="Poster of ${game.title}" class="game-poster" />
      <img src="${favoriteIconSrc}" alt="Favorit" class="favorite-icon" onclick="toggleFavorite(event, '${game.title}')">
@@ -1115,33 +1483,55 @@ function showGameModal(game) {
         <p class="game-difficulty"><img src="images/svaerhedsgrad-ikon.png" alt="Difficulty" class="difficulty-icon"> ${game.difficulty}</p>
       </div>
       <p class="game-rules">${game.rules}</p>
-       </div>
-       <p class="video-rules"> Videoregler </p>
-       <button id="choose-game-button">Vælg spil</button>
-       <p class="game-info">Ved valg af spil har du mulighed for at holde øje med, 
-       hvilke spil du har spillet, hvem du har spillet med, 
-       resultater fra hvert spil og meget mere. Dette gælder kun hvis du er logget ind.</p>
-      </div>
+    </div>
+    <p class="video-rules"> Videoregler </p>
+    <button id="choose-game-button">Vælg spil</button>
+    <p class="game-info">Ved valg af spil har du mulighed for at holde øje med, 
+    hvilke spil du har spillet, hvem du har spillet med, 
+    resultater fra hvert spil og meget mere. Dette gælder kun hvis du er logget ind.</p>
   `;
-
-  // Åbn modalen og forhindre baggrunds scroll
-  document.body.classList.add("modal-open");
-  document.querySelector("#game-dialog").showModal();
-
-  // Luk modal ved klik på backdrop eller ESC
-  const dialog = document.querySelector("#game-dialog");
-
-  dialog.addEventListener("close", () => {
-    document.body.classList.remove("modal-open");
-  });
-
-  dialog.addEventListener("click", (e) => {
-    if (e.target === dialog) {
-      dialog.close();
-    }
-  });
 }
 
+/**
+ * Åbn modal-dialogen og tilføj body-class for at forhindre scroll.
+ */
+function openGameDialog() {
+  document.body.classList.add("modal-open");
+  document.querySelector("#game-dialog").showModal();
+}
+
+/**
+ * Tilføj event listeners til modal for lukning (ESC, klik på backdrop).
+ * @param {Object} game
+ */
+function addGameModalEventListeners(game) {
+  const dialog = document.querySelector("#game-dialog");
+  // Fjern evt. gamle event listeners før tilføjelse (for at undgå dubletter)
+  dialog.addEventListener("close", handleModalClose, { once: true });
+  dialog.addEventListener("click", handleDialogBackdropClick);
+}
+
+/**
+ * Fjern body-class når modal lukkes.
+ */
+function handleModalClose() {
+  document.body.classList.remove("modal-open");
+}
+
+/**
+ * Luk modal hvis brugeren klikker på selve dialog-elementets baggrund.
+ * @param {Event} e
+ */
+function handleDialogBackdropClick(e) {
+  const dialog = document.querySelector("#game-dialog");
+  if (e.target === dialog) {
+    dialog.close();
+  }
+}
+
+/* ==============================================
+   KARRUSSEL SEKSTION
+   ============================================== */
 // ===== KARRUSSEL SYSTEM - TRANSFORM-BASERET MED INFINITE SCROLL =====
 // Dette er hovedkarrussel systemet der bruger CSS transforms til positioning
 // og skaber uendelig scroll ved at duplikere spillene i et 3x array

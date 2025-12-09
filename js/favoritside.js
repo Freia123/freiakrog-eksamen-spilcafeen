@@ -77,7 +77,6 @@ async function getFavoriteGames() {
     allGames = await response.json();
     console.log(`📊 JSON data modtaget: ${allGames.length} games`);
 
-    // HVAD GØR DE NÆSTE PAR LINJER ??
     // Hent favorit titler fra localStorage
     const favoriteTitles = getFavorites();
     console.log(`❤️ Fandt ${favoriteTitles.length} favoritter i localStorage`);
