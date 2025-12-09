@@ -395,7 +395,7 @@ function displayQuizContent() {
   startBtn.addEventListener("click", () => showQuestion(0));
 }
 
-// Render forsiden af quiz
+// Forsiden af quiz
 function renderQuizFrontPage(container) {
   container.innerHTML = `
     <article class="quiz-frontpage">
@@ -478,13 +478,6 @@ function openModal(selector) {
   document.body.classList.add("modal-open");
   modal.addEventListener("click", e => { if (e.target === modal) modal.close(); }, { once: true });
   modal.addEventListener("close", () => document.body.classList.remove("modal-open"), { once: true });
-}
-
-/* ===== ÅBEN SPIL MODAL FRA SPIN/QUIZ ===== */
-function openGameModal(game) {
-  if (!game) return;
-  const gameDialog = document.getElementById(`${game.title.toLowerCase().replace(/ /g,'-')}-dialog`);
-  if (gameDialog) gameDialog.showModal();
 }
 
 
